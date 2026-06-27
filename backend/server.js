@@ -2,9 +2,17 @@ const path = require('path');
 const sqlite3 = require('sqlite3');
 const express = require('express');
 const cors = require('cors');
+const fs = require('fs'); // <-- Agregamos esto
 
 const app = express();
-const dbPath = path.join(__dirname, 'data', 'database.sqlite');
+
+// Asegurar que la carpeta 'data' exista antes de conectar la base de datos
+const dataDir = path.join(__dirname, 'data');
+if (!fs.existsSync(dataDir)){
+    fs.mkdirSync(dataDir);
+}
+
+const dbPath = path.join(dataDir, 'database.sqlite');
 
 const db = new sqlite3.Database(dbPath, (err) => {
     if (err) {
