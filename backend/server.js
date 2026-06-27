@@ -19,7 +19,7 @@ app.use(cors());
 app.use(express.json());
 
 //Ruta de pruba para saber si el backend response
-app.get('/', (req. res) => {
+app.get('/', (req, res) => {
 	res.send('El servidor de catalogo esta funcionando correctamente.');
 });
 
