@@ -1,8 +1,42 @@
-<form id="form-producto">
-    <input type="text" id="nombre" placeholder="Nombre del producto" required>
-    <input type="number" step="0.01" id="precio" placeholder="Precio" required>
-    <input type="text" id="imagen" placeholder="URL de la imagen">
-    <textarea id="descripcion" placeholder="Descripción del producto"></textarea>
-    
-    <button type="submit">Guardar Producto</button>
-</form>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administración - La Joyita</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <main style="padding: 20px; max-width: 500px; margin: 0 auto;">
+        <h2>Panel de Administración</h2>
+        <p>Añade un nuevo producto al catálogo de la tienda:</p>
+
+        <form id="form-producto">
+            <div style="margin-bottom: 15px;">
+                <label for="nombre" style="display:block; margin-bottom:5px;">Nombre del Producto:</label>
+                <input type="text" id="nombre" placeholder="Ej. Queso Crema" required style="width:100%; padding:8px;">
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label for="precio" style="display:block; margin-bottom:5px;">Precio ($):</label>
+                <input type="number" step="0.01" id="precio" placeholder="Ej. 5.50" required style="width:100%; padding:8px;">
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label for="imagen" style="display:block; margin-bottom:5px;">Enlace (URL) de la Imagen:</label>
+                <input type="text" id="imagen" placeholder="https://ejemplo.com/imagen.jpg" style="width:100%; padding:8px;">
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label for="descripcion" style="display:block; margin-bottom:5px;">Descripción:</label>
+                <textarea id="descripcion" placeholder="Detalles del producto..." style="width:100%; padding:8px; height:80px;"></textarea>
+            </div>
+            
+            <button type="submit" style="width:100%; padding:10px; background:#28a745; color:white; border:none; cursor:pointer;">Guardar Producto</button>
+        </form>
+    </main>
+
+    <script src="admin.js"></script>
+</body>
+</html>
