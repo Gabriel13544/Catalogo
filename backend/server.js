@@ -6,7 +6,7 @@ const fs = require('fs');
 
 const app = express();
 
-// 1. Asegurar que la carpeta 'data' exista
+// 1. Asegurar que la carpeta 'data' exista antes de conectar
 const dataDir = path.join(__dirname, 'data');
 if (!fs.existsSync(dataDir)){
     fs.mkdirSync(dataDir);
@@ -14,14 +14,13 @@ if (!fs.existsSync(dataDir)){
 
 const dbPath = path.join(dataDir, 'database.sqlite');
 
-// 2. Conectar a la base de datos y crear la tabla si no existe
+// 2. Conectar a la base de datos y verificar la tabla de productos
 const db = new sqlite3.Database(dbPath, (err) => {
     if (err) {
         console.error('Error al conectar a SQLite:', err.message);
     } else {
         console.log('Conectado con éxito a la base de datos SQLite.');
         
-        // Crear la tabla de productos de forma automática
         db.run(`CREATE TABLE IF NOT EXISTS productos (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             nombre TEXT NOT NULL,
@@ -38,37 +37,30 @@ const db = new sqlite3.Database(dbPath, (err) => {
     }
 });
 
-// Configuraciones básicas para tu API
+// Configuraciones básicas obligatorias
 app.use(cors());
 app.use(express.json());
 
-// Ruta de prueba
+// Ruta base de prueba
 app.get('/', (req, res) => {
     res.send('El servidor de catalogo esta funcionando correctamente y listo.');
 });
 
-// ==========================================
-// 🚀 LAS DOS RUTAS QUE HACÍAN FALTA
-// ==========================================
-
-// RUTA 1: Obtener todos los productos (Para app.js)
+// RUTA GET: Obtener la lista de todos los productos
 app.get('/productos', (req, res) => {
     const sql = 'SELECT * FROM productos';
-    
     db.all(sql, [], (err, rows) => {
         if (err) {
             return res.status(500).json({ error: err.message });
         }
-        // Devuelve la lista completa de productos en formato JSON
         res.json(rows);
     });
 });
 
-// RUTA 2: Agregar un producto nuevo (Para admin.js)
+// RUTA POST: Recibir un producto nuevo desde el administrador
 app.post('/productos', (req, res) => {
     const { nombre, precio, imagen, descripcion } = req.body;
     
-    // Validación básica por seguridad
     if (!nombre || !precio) {
         return res.status(400).json({ error: 'El nombre y el precio son obligatorios.' });
     }
@@ -80,7 +72,6 @@ app.post('/productos', (req, res) => {
         if (err) {
             return res.status(500).json({ error: err.message });
         }
-        // Devuelve el producto que se acaba de crear junto con el ID que le asignó SQLite
         res.json({
             id: this.lastID,
             nombre,
@@ -91,7 +82,7 @@ app.post('/productos', (req, res) => {
     });
 });
 
-// Escuchar en el puerto automático de Render o en el 10000 localmente
+// Configuración del puerto para Render
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
     console.log(`Servidor corriendo en el puerto ${PORT}`);
