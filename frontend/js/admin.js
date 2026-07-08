@@ -1,30 +1,21 @@
 // URL de tu backend en Render
 const API_URL = 'https://tienda-lajoyita.onrender.com';
 
-// Esperar a que el HTML cargue por completo
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Buscar el formulario en tu HTML (asumiendo que tenga id="form-producto")
     const formulario = document.getElementById('form-producto');
 
     if (formulario) {
         formulario.addEventListener('submit', (e) => {
-            e.preventDefault(); // Evitar que la página se recargue
+            e.preventDefault(); 
 
-            // 2. Capturar los valores de los inputs de tu HTML
             const nombre = document.getElementById('nombre').value;
             const precio = parseFloat(document.getElementById('precio').value);
             const imagen = document.getElementById('imagen').value;
             const descripcion = document.getElementById('descripcion').value;
 
-            // 3. Crear el objeto con los datos del producto
-            const nuevoProducto = {
-                nombre,
-                precio,
-                imagen,
-                descripcion
-            };
+            const nuevoProducto = { nombre, precio, imagen, descripcion };
 
-            // 4. Enviar los datos al backend en Render usando POST
+            // Enviamos los datos al backend
             fetch(`${API_URL}/productos`, {
                 method: 'POST',
                 headers: {
@@ -33,22 +24,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 body: JSON.stringify(nuevoProducto)
             })
             .then(response => {
-                if (!response.ok) {
-                    throw new Error('Error en la respuesta del servidor');
+                // Si el servidor responde con un estado 200-299, todo está perfecto
+                if (response.ok) {
+                    alert('¡Producto agregado con éxito a La Joyita!');
+                    formulario.reset(); // Limpiar formulario
+                } else {
+                    alert('El servidor recibió el producto pero devolvió un error.');
                 }
-                return response.json();
-            })
-            .then(data => {
-                alert('¡Producto agregado con éxito a La Joyita!');
-                formulario.reset(); // Limpiar el formulario
-                console.log('Producto registrado:', data);
             })
             .catch(error => {
-                console.error('Error al guardar el producto:', error);
-                alert('Hubo un problema al guardar el producto.');
+                // Aquí solo entra si verdaderamente NO hay internet o Render está caído
+                console.error('Error de red:', error);
+                alert('Hubo un aviso en la red, pero revisa el catálogo por si acaso.');
             });
         });
-    } else {
-        console.warn('No se encontró ningún formulario con el id "form-producto".');
     }
 });
