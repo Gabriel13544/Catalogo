@@ -16,12 +16,13 @@ const db = new sqlite3.Database(dbPath, (err) => {
         console.error('Error al conectar con SQLite:', err.message);
     } else {
         console.log('Conectado con éxito a la base de datos SQLite.');
-        // Crear la tabla si no existe
+        // Crear la tabla incluyendo la nueva columna 'seccion'
         db.run(`CREATE TABLE IF NOT EXISTS productos (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             nombre TEXT NOT NULL,
             precio REAL NOT NULL,
             imagen TEXT,
+            seccion TEXT,
             descripcion TEXT
         )`);
     }
@@ -42,16 +43,16 @@ app.get('/productos', (req, res) => {
     });
 });
 
-// 2. RUTA POST: Registrar un nuevo producto
+// 2. RUTA POST: Registrar un nuevo producto (Incluye Sección)
 app.post('/productos', (req, res) => {
-    const { nombre, precio, imagen, descripcion } = req.body;
+    const { nombre, precio, imagen, seccion, descripcion } = req.body;
     
     if (!nombre || !precio) {
         return res.status(400).json({ error: 'El nombre y el precio son obligatorios.' });
     }
 
-    const sql = 'INSERT INTO productos (nombre, precio, imagen, descripcion) VALUES (?, ?, ?, ?)';
-    const params = [nombre, precio, imagen || '', descripcion || ''];
+    const sql = 'INSERT INTO productos (nombre, precio, imagen, seccion, descripcion) VALUES (?, ?, ?, ?, ?)';
+    const params = [nombre, precio, imagen || '', seccion || 'A', descripcion || ''];
 
     db.run(sql, params, function (err) {
         if (err) {
@@ -62,6 +63,7 @@ app.post('/productos', (req, res) => {
             nombre,
             precio,
             imagen,
+            seccion,
             descripcion
         });
     });
