@@ -3,62 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel de Administración - La Joyita</title>
+    <title>Panel de Administración - BikerShop</title>
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
 
-    <main style="padding: 20px; max-width: 500px; margin: 0 auto;">
-        <h2>Panel de Administración</h2>
-        <p>Añade un nuevo producto al catálogo de la tienda:</p>
+    <header class="encabezado">
+        <h1>Panel de Administración</h1>
+        <p>Gestión de Inventario - BikerShop</p>
+    </header>
 
-        <form id="form-producto">
-            <div style="margin-bottom: 15px;">
-                <label for="nombre" style="display:block; margin-bottom:5px;">Nombre del Producto:</label>
-                <input type="text" id="nombre" placeholder="Ej. Queso Cream" required style="width:100%; padding:8px;">
-            </div>
+    <div class="contenedor-principal" style="max-width: 700px; display: block;">
+        
+        <main class="tarjeta-producto" style="padding: 30px; margin-bottom: 30px;">
+            <h2 style="margin-bottom: 15px; border-bottom: 2px solid #eee; padding-bottom: 10px;">Añadir Nuevo Producto</h2>
+            
+            <form id="form-producto" class="formulario-admin">
+                <div class="grupo-form">
+                    <label for="nombre">Nombre del Producto:</label>
+                    <input type="text" id="nombre" placeholder="Ej. Queso Crema" required>
+                </div>
 
-            <div style="margin-bottom: 15px;">
-                <label for="precio" style="display:block; margin-bottom:5px;">Precio ($):</label>
-                <input type="number" step="0.01" id="precio" placeholder="Ej. 5.50" required style="width:100%; padding:8px;">
-            </div>
+                <div class="grupo-form">
+                    <label for="precio">Precio ($):</label>
+                    <input type="number" step="0.01" id="precio" placeholder="Ej. 5.50" required>
+                </div>
 
-            <div style="margin-bottom: 15px;">
-                <label for="imagen" style="display:block; margin-bottom:5px;">Enlace (URL) de la Imagen:</label>
-                <input type="text" id="imagen" placeholder="https://ejemplo.com/imagen.jpg" style="width:100%; padding:8px;">
-            </div>
+                <div class="grupo-form">
+                    <label for="imagen">Enlace (URL) de la Imagen:</label>
+                    <input type="text" id="imagen" placeholder="https://ejemplo.com/imagen.jpg">
+                </div>
 
-            <div style="margin-bottom: 15px;">
-                <label for="seccion" style="display:block; margin-bottom:5px;">Seleccionar Sección/Categoría:</label>
-                <select id="seccion" required style="width:100%; padding:8px; background: white; border: 1px solid #ccc;">
-                    <option value="" disabled selected>-- Elige una sección --</option>
-                    <option value="A">Sección A</option>
-                    <option value="B">Sección B</option>
-                    <option value="C">Sección C</option>
-                    <option value="D">Sección D</option>
-                    <option value="E">Sección E</option>
-                    <option value="F">Sección F</option>
-                    <option value="G">Sección G</option>
-                    <option value="H">Sección H</option>
-                    <option value="I">Sección I</option>
-                    <option value="J">Sección J</option>
-                    <option value="K">Sección K</option>
-                </select>
-            </div>
+                <div class="grupo-form">
+                    <label for="seccion">Seleccionar Sección/Categoría:</label>
+                    <select id="seccion" required>
+                        <option value="" disabled selected>-- Elige una sección --</option>
+                        <option value="A">Sección A</option>
+                        <option value="B">Sección B</option>
+                        <option value="C">Sección C</option>
+                        <option value="D">Sección D</option>
+                        <option value="E">Sección E</option>
+                        <option value="F">Sección F</option>
+                        <option value="G">Sección G</option>
+                        <option value="H">Sección H</option>
+                        <option value="I">Sección I</option>
+                        <option value="J">Sección J</option>
+                        <option value="K">Sección K</option>
+                    </select>
+                </div>
 
-            <div style="margin-bottom: 15px;">
-                <label for="descripcion" style="display:block; margin-bottom:5px;">Descripción:</label>
-                <textarea id="descripcion" placeholder="Detalles del producto..." style="width:100%; padding:8px; height:80px;"></textarea>
-            </div>
+                <div class="grupo-form">
+                    <label for="descripcion">Descripción:</label>
+                    <textarea id="descripcion" placeholder="Detalles del producto..." rows="3"></textarea>
+                </div>
 
-            <button type="submit" style="width:100%; padding:10px; background:#28a745; color:white; border:none; cursor:pointer;">Guardar Producto</button>
-        </form>
+                <button type="submit" class="btn-accion">Guardar Producto</button>
+            </form>
+        </main>
 
-        <div id="lista-productos-admin" style="margin-top: 30px; border-top: 2px solid #eee; padding-top: 20px;">
-            <h3>Productos Existentes</h3>
-            <div id="contenedor-eliminar"></div>
-        </div>
-    </main>
+        <aside class="tarjeta-producto" style="padding: 30px;">
+            <h3 style="margin-bottom: 15px; border-bottom: 2px solid #eee; padding-bottom: 10px;">Productos Existentes</h3>
+            <div id="contenedor-eliminar" class="lista-admin"></div>
+        </aside>
+
+    </div>
 
     <script src="js/admin.js"></script>
 </body>
