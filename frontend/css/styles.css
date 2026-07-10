@@ -1,0 +1,198 @@
+/* ==========================================
+   CONFIGURACIÓN GENERAL
+   ========================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background-color: #f4f4f9;
+    color: #333;
+}
+
+/* ==========================================
+   ENCABEZADO
+   ========================================== */
+.encabezado {
+    background-color: #222;
+    color: white;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.encabezado p {
+    color: #ccc;
+    margin-top: 5px;
+}
+
+/* ==========================================
+   DISEÑO PRINCIPAL (PRODUCTOS + CARRITO)
+   ========================================== */
+.contenedor-principal {
+    display: flex;
+    flex-wrap: wrap;
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 0 20px;
+    gap: 30px;
+}
+
+.seccion-productos {
+    flex: 3; /* Ocupa más espacio de la pantalla */
+    min-width: 60%;
+}
+
+/* ==========================================
+   FILTROS
+   ========================================== */
+.barra-filtros {
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.barra-filtros select {
+    padding: 8px;
+    margin-left: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+/* ==========================================
+   GRILLA DE PRODUCTOS Y TARJETAS
+   ========================================== */
+.grid-productos {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 20px;
+}
+
+.tarjeta-producto {
+    background: white;
+    border-radius: 8px;
+    overflow: hidden; /* Evita que la imagen se salga de las curvas */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    transition: transform 0.2s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.tarjeta-producto:hover {
+    transform: translateY(-5px);
+}
+
+/* Control exacto del tamaño de la imagen */
+.tarjeta-producto img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover; /* Ajuste perfecto sin distorsionar */
+    border-bottom: 1px solid #eee;
+}
+
+.contenido-tarjeta {
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.contenido-tarjeta h3 {
+    font-size: 18px;
+    margin-bottom: 5px;
+}
+
+.etiqueta-seccion {
+    font-size: 12px;
+    background: #e3f2fd;
+    color: #1976d2;
+    padding: 3px 6px;
+    border-radius: 4px;
+    display: inline-block;
+    margin-bottom: 10px;
+}
+
+.precio {
+    font-size: 20px;
+    font-weight: bold;
+    color: #28a745;
+    margin: 10px 0;
+}
+
+/* ==========================================
+   CARRITO LATERAL
+   ========================================== */
+.seccion-carrito {
+    flex: 1;
+    min-width: 300px;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    height: fit-content; /* Para que no se estire de más */
+    position: sticky;
+    top: 20px;
+}
+
+.seccion-carrito h3 {
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+
+#lista-carrito {
+    list-style: none;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+#lista-carrito li {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #f0f0f0;
+    padding-bottom: 5px;
+}
+
+.total-seccion {
+    margin-top: 20px;
+    font-size: 22px;
+    text-align: right;
+    border-top: 2px solid #eee;
+    padding-top: 15px;
+}
+
+/* ==========================================
+   BOTONES
+   ========================================== */
+.btn-accion {
+    width: 100%;
+    padding: 10px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.2s;
+    margin-top: auto; /* Empuja el botón al fondo de la tarjeta */
+}
+
+.btn-accion:hover {
+    background-color: #218838;
+}
+
+.btn-eliminar-carrito {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 3px 8px;
+    cursor: pointer;
+}
