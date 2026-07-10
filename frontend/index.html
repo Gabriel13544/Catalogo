@@ -3,31 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tienda La Joyita - Catálogo</title>
+    
+    <meta property="og:title" content="Tienda BikerShop">
+    <meta property="og:description" content="Catálogo de productos e inventario">
+    <meta property="og:image" content="URL_DE_TU_LOGO_AQUI"> 
+    
+    <title>Tienda BikerShop - Catálogo</title>
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
 
-    <header style="background: #333; color: white; padding: 20px; text-align: center;">
+    <header class="encabezado">
+        <img src="URL_DE_TU_LOGO_AQUI" alt="Logo BikerShop" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin-bottom: 10px;">
+        
         <h1>Nuestro Catálogo</h1>
-        <p>Tienda de Alimentos La Joyita</p>
+        <p>Tienda BikerShop</p>
     </header>
 
-    <main style="padding: 20px; max-width: 1200px; margin: 0 auto;">
-        <div id="contenedor-productos">
-            <p>Cargando productos de La Joyita...</p>
-        </div>
-    </main>
+    <div class="contenedor-principal">
+        
+        <main class="seccion-productos">
+            <div class="barra-filtros">
+                <label for="filtro-seccion"><strong>Mostrar Categoría:</strong></label>
+                <select id="filtro-seccion">
+                    <option value="TODAS" selected>Todas las Secciones</option>
+                    <option value="A">Sección A</option>
+                    <option value="B">Sección B</option>
+                    <option value="C">Sección C</option>
+                    <option value="D">Sección D</option>
+                    <option value="E">Sección E</option>
+                    <option value="F">Sección F</option>
+                    <option value="G">Sección G</option>
+                    <option value="H">Sección H</option>
+                    <option value="I">Sección I</option>
+                    <option value="J">Sección J</option>
+                    <option value="K">Sección K</option>
+                </select>
+            </div>
 
-    <aside class="seccion-carrito">
-         <h3>Tu Carrito (<span id="contador-carrito">0</span>)</h3>
-         <ul id="lista-carrito">
-         </ul>
-         <div class="total-seccion">
-              <strong>Total:</strong> <span id="total-carrito">$0.00</span>
-         </div>
-    </aside>  
-    
+            <div id="contenedor-productos" class="grid-productos">
+                <p>Cargando productos de La Joyita...</p>
+            </div>
+        </main>
+
+        <aside class="seccion-carrito">
+            <h3>Tu Carrito (<span id="contador-carrito">0</span>)</h3>
+            
+            <ul id="lista-carrito">
+            </ul>
+            
+            <div class="total-seccion">
+                <strong>Total:</strong> <span id="total-carrito">$0.00</span>
+            </div>
+            
+            <button id="btn-comprar" class="btn-accion" style="margin-top: 15px;">Enviar Pedido</button>
+        </aside>
+
+    </div>
+
     <script src="js/app.js"></script>
 </body>
 </html>
