@@ -196,3 +196,50 @@ body {
     padding: 3px 8px;
     cursor: pointer;
 }
+
+/* ==========================================
+   ESTILOS DEL PANEL DE ADMINISTRACIÓN
+   ========================================== */
+.formulario-admin .grupo-form {
+    margin-bottom: 15px;
+}
+
+.formulario-admin label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #444;
+}
+
+.formulario-admin input[type="text"],
+.formulario-admin input[type="number"],
+.formulario-admin select,
+.formulario-admin textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    background-color: #fafafa;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+/* Efecto visual cuando haces clic para escribir */
+.formulario-admin input:focus,
+.formulario-admin select:focus,
+.formulario-admin textarea:focus {
+    border-color: #28a745;
+    outline: none;
+    box-shadow: 0 0 5px rgba(40, 167, 69, 0.3);
+    background-color: white;
+}
+
+/* Estilo para las filas de productos a eliminar */
+.lista-admin > div {
+    transition: background-color 0.2s;
+    border-radius: 4px;
+}
+
+.lista-admin > div:hover {
+    background-color: #f9f9f9;
+}
