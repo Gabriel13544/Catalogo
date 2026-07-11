@@ -1,5 +1,5 @@
 /* ==========================================
-   CONFIGURACIÓN GENERAL
+   CONFIGURACIÓN GENERAL Y FONDO GRADIENT
    ========================================== */
 * {
     margin: 0;
@@ -9,19 +9,25 @@
 }
 
 body {
-    background-color: #f4f4f9;
+    /* 🌟 DEGRADADO: Empieza en rojo vivo (#e50914) y termina en negro puro (#000000) */
+    background: linear-gradient(to bottom, #e50914, #000000);
+    /* Mantiene el fondo fijo para que no se mueva ni se rompa al hacer scroll */
+    background-attachment: fixed; 
+    min-height: 100vh;
     color: #333;
 }
 
 /* ==========================================
-   ENCABEZADO
+   ENCABEZADO (Combinado con el fondo)
    ========================================== */
 .encabezado {
-    background-color: #222;
+    /* Fondo negro semi-transparente para que el degradado rojo se intuya detrás */
+    background-color: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(5px); /* Efecto de vidrio esmerilado moderno */
     color: white;
     padding: 20px;
     text-align: center;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
 }
 
 .encabezado p {
@@ -42,7 +48,7 @@ body {
 }
 
 .seccion-productos {
-    flex: 3; /* Ocupa más espacio de la pantalla */
+    flex: 3;
     min-width: 60%;
 }
 
@@ -54,7 +60,7 @@ body {
     padding: 15px;
     border-radius: 8px;
     margin-bottom: 20px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
 }
 
 .barra-filtros select {
@@ -77,22 +83,23 @@ body {
 .tarjeta-producto {
     background: white;
     border-radius: 8px;
-    overflow: hidden; /* Evita que la imagen se salga de las curvas */
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    transition: transform 0.2s ease;
+    overflow: hidden;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
     display: flex;
     flex-direction: column;
 }
 
 .tarjeta-producto:hover {
     transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.4);
 }
 
 /* Control exacto del tamaño de la imagen */
 .tarjeta-producto img {
     width: 100%;
     height: 180px;
-    object-fit: cover; /* Ajuste perfecto sin distorsionar */
+    object-fit: cover;
     border-bottom: 1px solid #eee;
 }
 
@@ -110,6 +117,46 @@ body {
 
 .etiqueta-seccion {
     font-size: 12px;
+    background: #e3f2fd;
+    color: #1976d2;
+    padding: 3px 6px;
+    border-radius: 4px;
+    display: inline-block;
+    margin-bottom: 10px;
+    width: fit-content;
+}
+
+.precio {
+    font-size: 20px;
+    font-weight: bold;
+    color: #28a745;
+    margin: 10px 0;
+}
+
+/* ==========================================
+   CARRITO LATERAL
+   ========================================== */
+.seccion-carrito {
+    flex: 1;
+    min-width: 300px;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+    height: fit-content;
+    position: sticky;
+    top: 20px;
+}
+
+.seccion-carrito h3 {
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+
+#lista-carrito {
+    list-style: none;
+    max-height: 400px;
     background: #e3f2fd;
     color: #1976d2;
     padding: 3px 6px;
