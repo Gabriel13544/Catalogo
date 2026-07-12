@@ -290,3 +290,125 @@ body {
 .lista-admin > div:hover {
     background-color: #f9f9f9;
 }
+
+/* ==========================================
+   ANIMACIONES (@keyframes)
+   ========================================== */
+/* Animación para que la página y las tarjetas aparezcan suavemente desde abajo */
+@keyframes aparecerSuave {
+    0% {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Animación de destello suave para el encabezado */
+@keyframes brillar {
+    0% { box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+    50% { box-shadow: 0 4px 15px rgba(229, 9, 20, 0.5); }
+    100% { box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+}
+
+/* Aplicando las animaciones a los elementos */
+.tarjeta-producto, .seccion-carrito, .formulario-admin {
+    animation: aparecerSuave 0.6s ease-out forwards;
+}
+
+.encabezado {
+    animation: brillar 3s infinite;
+}
+
+/* ==========================================
+   RESPONSIVIDAD (@media queries)
+   ========================================== */
+
+/* 1. Monitores muy grandes y Macs (Más de 1200px) */
+@media (min-width: 1201px) {
+    .contenedor-principal {
+        max-width: 1400px; /* Se expande un poco más para aprovechar la pantalla */
+    }
+    .grid-productos {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Tarjetas más anchas */
+    }
+}
+
+/* 2. Laptops y Tablets (Hasta 1024px) */
+@media (max-width: 1024px) {
+    .contenedor-principal {
+        flex-direction: column; /* El carrito pasa abajo de los productos */
+    }
+    .seccion-carrito {
+        width: 100%;
+        position: relative; /* Deja de estar pegado arriba */
+        top: 0;
+    }
+}
+
+/* 3. Teléfonos Móviles Grandes (Hasta 480px) */
+@media (max-width: 480px) {
+    .encabezado h1 {
+        font-size: 24px;
+    }
+    .encabezado img {
+        width: 60px;
+        height: 60px;
+    }
+    .grid-productos {
+        grid-template-columns: 1fr; /* Una sola columna para que las fotos se vean grandes */
+    }
+    .tarjeta-producto img {
+        height: 220px;
+    }
+}
+
+/* 4. Teléfonos Móviles Estándar (Hasta 360px) */
+@media (max-width: 360px) {
+    .encabezado h1 {
+        font-size: 20px;
+    }
+    .contenido-tarjeta {
+        padding: 10px;
+    }
+    .contenido-tarjeta h3 {
+        font-size: 16px;
+    }
+    .precio {
+        font-size: 18px;
+    }
+    .btn-accion {
+        padding: 8px;
+        font-size: 14px;
+    }
+}
+
+/* 5. Pantallas Ultra Pequeñas / Dispositivos Antiguos (Hasta 240px) */
+@media (max-width: 240px) {
+    .contenedor-principal {
+        padding: 0 10px; /* Reducimos los bordes al máximo */
+    }
+    .encabezado img {
+        width: 45px;
+        height: 45px;
+    }
+    .encabezado h1 {
+        font-size: 16px;
+    }
+    .encabezado p {
+        font-size: 12px;
+    }
+    .barra-filtros {
+        padding: 10px;
+    }
+    .barra-filtros select {
+        width: 100%;
+        margin-left: 0;
+        margin-top: 10px; /* El selector pasa a la línea de abajo por falta de espacio */
+    }
+    .tarjeta-producto img {
+        height: 150px;
+    }
+}
