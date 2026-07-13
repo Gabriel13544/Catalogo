@@ -136,45 +136,7 @@ body {
 /* ==========================================
    CARRITO LATERAL
    ========================================== */
-.seccion-carrito {
-    flex: 1;
-    min-width: 300px;
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 6px 12px rgba(0,0,0,0.2);
-    height: fit-content;
-    position: sticky;
-    top: 20px;
-}
 
-.seccion-carrito h3 {
-    border-bottom: 2px solid #eee;
-    padding-bottom: 10px;
-    margin-bottom: 15px;
-}
-
-#lista-carrito {
-    list-style: none;
-    max-height: 400px;
-    background: #e3f2fd;
-    color: #1976d2;
-    padding: 3px 6px;
-    border-radius: 4px;
-    display: inline-block;
-    margin-bottom: 10px;
-}
-
-.precio {
-    font-size: 20px;
-    font-weight: bold;
-    color: #28a745;
-    margin: 10px 0;
-}
-
-/* ==========================================
-   CARRITO LATERAL
-   ========================================== */
 .seccion-carrito {
     flex: 1;
     min-width: 300px;
@@ -218,17 +180,21 @@ body {
 /* ==========================================
    BOTONES
    ========================================== */
+
 .btn-accion {
-    width: 100%;
-    padding: 10px;
-    background-color: #28a745;
+    background-color: #28a745; /* Verde profesional */
     color: white;
+    padding: 10px 20px;
     border: none;
-    border-radius: 4px;
+    border-radius: 5px;
     cursor: pointer;
+    width: 100%; /* Para que ocupe todo el ancho del carrito */
     font-size: 16px;
-    transition: background-color 0.2s;
-    margin-top: auto; /* Empuja el botón al fondo de la tarjeta */
+    margin-top: 10px;
+}
+
+.btn-accion:hover {
+    background-color: #218838; /* Un verde un poco más oscuro al pasar el ratón */
 }
 
 .btn-accion:hover {
@@ -236,12 +202,17 @@ body {
 }
 
 .btn-eliminar-carrito {
-    background-color: #dc3545;
+    background-color: #ff4d4d;
     color: white;
     border: none;
-    border-radius: 4px;
-    padding: 3px 8px;
+    padding: 2px 8px;
     cursor: pointer;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+.btn-eliminar-carrito:hover {
+    background-color: #cc0000;
 }
 
 /* ==========================================
