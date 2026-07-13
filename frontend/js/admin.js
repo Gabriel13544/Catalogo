@@ -1,5 +1,5 @@
 // URL de tu backend en Render
-const API_URL = 'https://tienda-lajoyita.onrender.com';
+const API_URL = 'https://tienda-bikershop.onrender.com';
 
 document.addEventListener('DOMContentLoaded', () => {
     const formulario = document.getElementById('form-producto');
