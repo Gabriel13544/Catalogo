@@ -1,5 +1,5 @@
-// URL de tu servidor backend en Render (Asegúrate de que esta sea la correcta)
-const API_URL = 'https://tienda-lajoyita.onrender.com';
+// URL de tu servidor backend en Render
+const API_URL = 'https://tienda-bikershop.onrender.com';
 
 // Variables globales
 let productosGlobales = [];
