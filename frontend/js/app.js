@@ -134,5 +134,3 @@ function enviarPedidoWhatsApp() {
 
     window.open(urlWhatsApp, '_blank');
 }
-
-}
