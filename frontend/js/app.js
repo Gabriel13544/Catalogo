@@ -67,9 +67,8 @@ function configurarFiltro() {
     }
 }
 
-// 3. CARRITO (Versión única y corregida)
+// 3. CARRITO Y ENVÍO POR WHATSAPP
 function agregarAlCarrito(id, nombre, precio) {
-    // Busca si ya existe para sumar cantidad o añadir nuevo
     const existente = carrito.find(item => item.id === id);
     if (existente) {
         existente.cantidad += 1;
@@ -100,14 +99,40 @@ function actualizarCarrito() {
         totalItems += item.cantidad;
 
         const li = document.createElement('li');
+        li.className = 'item-carrito';
         li.innerHTML = `
             <span>${item.nombre} x${item.cantidad}</span>
             <span>$${(item.precio * item.cantidad).toFixed(2)}</span>
-            <button onclick="eliminarDelCarrito(${item.id})">X</button>
+            <button class="btn-eliminar-carrito" onclick="eliminarDelCarrito(${item.id})">X</button>
         `;
         listaCarrito.appendChild(li);
     });
 
     totalCarrito.innerText = `$${total.toFixed(2)}`;
     if (contadorCarrito) contadorCarrito.innerText = totalItems;
+}
+
+function enviarPedidoWhatsApp() {
+    if (carrito.length === 0) {
+        alert("Tu carrito está vacío.");
+        return;
+    }
+
+    let mensaje = "Hola, quiero realizar el siguiente pedido:%0A%0A";
+    let total = 0;
+
+    carrito.forEach(item => {
+        mensaje += `- ${item.nombre} (x${item.cantidad}): $${(item.precio * item.cantidad).toFixed(2)}%0A`;
+        total += (item.precio * item.cantidad);
+    });
+
+    mensaje += `%0A*Total: $${total.toFixed(2)}*`;
+
+    // REEMPLAZA EL 521XXXXXXXXXX POR TU NÚMERO CON CÓDIGO DE PAÍS
+    const numeroTelefono = "521XXXXXXXXXX"; 
+    const urlWhatsApp = `https://wa.me/${numeroTelefono}?text=${mensaje}`;
+
+    window.open(urlWhatsApp, '_blank');
+}
+
 }
