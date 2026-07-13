@@ -9,6 +9,10 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// 🔐 CONTRASEÑA SECRETA DEL ADMINISTRADOR
+// Puedes cambiar 'biker2026' por la contraseña que tú quieras
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'biker2026';
+
 // Conexión y creación de la Base de Datos SQLite
 const dbPath = path.resolve(__dirname, 'productos.db');
 const db = new sqlite3.Database(dbPath, (err) => {
@@ -29,7 +33,27 @@ const db = new sqlite3.Database(dbPath, (err) => {
 });
 
 // ==========================================
-// RUTAS DEL API
+// RUTAS DE AUTENTICACIÓN
+// ==========================================
+
+// Ruta POST: Validar la contraseña del administrador
+app.post('/admin/login', (req, res) => {
+    const { password } = req.body;
+    
+    if (!password) {
+        return res.status(400).json({ error: 'La contraseña es obligatoria.' });
+    }
+
+    if (password === ADMIN_PASSWORD) {
+        return res.json({ success: true, message: 'Acceso concedido.' });
+    } else {
+        return res.status(401).json({ error: 'Contraseña incorrecta.' });
+    }
+});
+
+
+// ==========================================
+// RUTAS DEL API (PRODUCTOS)
 // ==========================================
 
 // 1. RUTA GET: Obtener todos los productos
@@ -69,7 +93,7 @@ app.post('/productos', (req, res) => {
     });
 });
 
-// 3. RUTA DELETE: Eliminar un producto por su ID (CORREGIDA)
+// 3. RUTA DELETE: Eliminar un producto por su ID
 app.delete('/productos/:id', (req, res) => {
     const { id: productoId } = req.params;
     const sql = 'DELETE FROM productos WHERE id = ?';
