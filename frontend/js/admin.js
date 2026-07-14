@@ -3,7 +3,13 @@ let todosLosProductos = [];
 let imagenBase64Actual = ""; // Guardará el texto de la imagen seleccionada
 
 document.addEventListener('DOMContentLoaded', () => {
-    obtenerProductosAdmin();
+    // 🛡️ COMPROBACIÓN DE SEGURIDAD
+    // Si el administrador ya inició sesión con éxito en esta pestaña, ocultamos el login y cargamos todo.
+    if (sessionStorage.getItem('admin_autenticado') === 'true') {
+        const pantallaLogin = document.getElementById('pantalla-login');
+        if (pantallaLogin) pantallaLogin.style.display = 'none';
+        obtenerProductosAdmin();
+    }
     
     // Escuchar cuando el usuario seleccione una foto del dispositivo
     const inputImagen = document.getElementById('imagen-archivo');
@@ -12,10 +18,57 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Escuchar el envío del formulario
-    document.getElementById('formulario-producto').addEventListener('submit', guardarOActualizarProducto);
+    const formulario = document.getElementById('formulario-producto');
+    if (formulario) {
+        formulario.addEventListener('submit', guardarOActualizarProducto);
+    }
 });
 
-// Función para transformar la foto del dispositivo en Texto (Base64)
+// ==========================================
+// 🔐 NUEVO: CONTROL DE ACCESO (LOGIN)
+// ==========================================
+function verificarPassword() {
+    const passwordInput = document.getElementById('input-password');
+    const errorMsg = document.getElementById('error-login');
+    const password = passwordInput ? passwordInput.value : '';
+
+    if (!password) {
+        alert("Por favor, ingresa una contraseña.");
+        return;
+    }
+
+    fetch(`${API_URL}/admin/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password })
+    })
+    .then(res => {
+        if (!res.ok) {
+            throw new Error('Contraseña incorrecta');
+        }
+        return res.json();
+    })
+    .then(data => {
+        if (data.success) {
+            // Guardamos el estado para no volver a pedir contraseña en esta pestaña
+            sessionStorage.setItem('admin_autenticado', 'true');
+            
+            const pantallaLogin = document.getElementById('pantalla-login');
+            if (pantallaLogin) pantallaLogin.style.display = 'none';
+            
+            obtenerProductosAdmin();
+        }
+    })
+    .catch(err => {
+        console.error('Error de autenticación:', err);
+        if (errorMsg) errorMsg.style.display = 'block';
+        if (passwordInput) passwordInput.value = ''; // Limpiar el input para reintento
+    });
+}
+
+// ==========================================
+// 📸 PROCESAMIENTO DE IMÁGENES
+// ==========================================
 function procesarImagen(e) {
     const archivo = e.target.files[0];
     if (!archivo) return;
@@ -28,13 +81,17 @@ function procesarImagen(e) {
     reader.readAsDataURL(archivo);
 }
 
+// ==========================================
+// 🛒 GESTIÓN DE PRODUCTOS (GET, POST, PUT, DELETE)
+// ==========================================
+
 // 1. OBTENER Y LISTAR PRODUCTOS CON EL BOTÓN "EDITAR"
 function obtenerProductosAdmin() {
     fetch(`${API_URL}/productos`)
         .then(res => res.json())
         .then(productos => {
             todosLosProductos = productos;
-            const lista = document.getElementById('lista-productos-existentes'); // Asegúrate que este ID exista en tu HTML abajo del form
+            const lista = document.getElementById('lista-productos-existentes');
             if (!lista) return;
             
             lista.innerHTML = '';
@@ -70,7 +127,7 @@ function cargarFormularioEditar(id) {
     // Mantener la imagen vieja en memoria por si no sube una nueva
     imagenBase64Actual = producto.imagen || '';
     if (producto.imagen) {
-        document.getElementById('vista-previa-imagen').innerHTML = `<p>Imagen actual:</p><img src="${producto.imagen}" style="max-width: 100px; border-radius: 5px;">`;
+        document.getElementById('vista-previa-imagen').innerHTML = `<p style="margin: 5px 0; font-size: 14px; color: #555;">Imagen actual:</p><img src="${producto.imagen}" style="max-width: 100px; border-radius: 5px;">`;
     } else {
         document.getElementById('vista-previa-imagen').innerHTML = '';
     }
@@ -87,8 +144,10 @@ function cancelarEdicion() {
     document.getElementById('producto-id').value = '';
     imagenBase64Actual = '';
     document.getElementById('vista-previa-imagen').innerHTML = '';
-    document.getElementById('btn-guardar').innerText = "Guardar Producto";
-    document.getElementById('btn-guardar').style.backgroundColor = "#28a745"; // Verde original
+    
+    const btnGuardar = document.getElementById('btn-guardar');
+    btnGuardar.innerText = "Guardar Producto";
+    btnGuardar.style.backgroundColor = ""; // Regresa al estilo CSS por defecto (o pon #28a745)
     document.getElementById('btn-cancelar').style.display = "none";
 }
 
@@ -110,6 +169,48 @@ function guardarOActualizarProducto(e) {
         descripcion
     };
 
+    let url = `${API_URL}/productos`;
+    let metodo = 'POST';
+
+    // Si el ID oculto tiene número, significa que estamos EDITANDO en lugar de crear
+    if (id) {
+        url = `${API_URL}/productos/${id}`;
+        metodo = 'PUT';
+    }
+
+    const btnGuardar = document.getElementById('btn-guardar');
+    btnGuardar.innerText = "Procesando...";
+
+    fetch(url, {
+        method: metodo,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(datosProducto)
+    })
+    .then(res => res.json())
+    .then(() => {
+        alert(id ? "¡Producto actualizado correctamente!" : "¡Producto creado correctamente!");
+        cancelarEdicion(); // Limpia el formulario y reestablece botones
+        obtenerProductosAdmin(); // Recarga la lista visible
+    })
+    .catch(err => {
+        console.error('Error al guardar/actualizar:', err);
+        alert('Ocurrió un error en la operación.');
+        btnGuardar.innerText = id ? "Actualizar Producto" : "Guardar Producto";
+    });
+}
+
+// 4. ELIMINAR PRODUCTO
+function eliminarProductoAdmin(id) {
+    if (!confirm('¿Estás seguro de que deseas eliminar este producto?')) return;
+
+    fetch(`${API_URL}/productos/${id}`, { method: 'DELETE' })
+        .then(res => res.json())
+        .then(() => {
+            alert('Producto eliminado.');
+            obtenerProductosAdmin();
+        })
+        .catch(err => console.error('Error al eliminar:', err));
+}
     let url = `${API_URL}/productos`;
     let metodo = 'POST';
 
