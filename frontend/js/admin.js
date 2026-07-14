@@ -30,12 +30,20 @@ document.addEventListener('DOMContentLoaded', () => {
 function verificarPassword() {
     const passwordInput = document.getElementById('input-password');
     const errorMsg = document.getElementById('error-login');
+    const btnIngresar = document.getElementById('btn-ingresar');
     const password = passwordInput ? passwordInput.value : '';
 
     if (!password) {
         alert("Por favor, ingresa una contraseña.");
         return;
     }
+
+    // ⏳ Efecto de carga: Deshabilitamos el botón para evitar clics dobles mientras Render despierta
+    if (btnIngresar) {
+        btnIngresar.innerText = "Verificando... (Espere)";
+        btnIngresar.disabled = true;
+    }
+    if (errorMsg) errorMsg.style.display = 'none';
 
     fetch(`${API_URL}/admin/login`, {
         method: 'POST',
@@ -50,7 +58,7 @@ function verificarPassword() {
     })
     .then(data => {
         if (data.success) {
-            // Guardamos el estado para no volver a pedir contraseña en esta pestaña
+            // Guardamos sesión activa
             sessionStorage.setItem('admin_autenticado', 'true');
             
             const pantallaLogin = document.getElementById('pantalla-login');
@@ -62,7 +70,14 @@ function verificarPassword() {
     .catch(err => {
         console.error('Error de autenticación:', err);
         if (errorMsg) errorMsg.style.display = 'block';
-        if (passwordInput) passwordInput.value = ''; // Limpiar el input para reintento
+        if (passwordInput) passwordInput.value = ''; // Limpiar input para reintentar
+    })
+    .finally(() => {
+        // Restablecemos el botón una vez que la petición termine
+        if (btnIngresar) {
+            btnIngresar.innerText = "Ingresar";
+            btnIngresar.disabled = false;
+        }
     });
 }
 
