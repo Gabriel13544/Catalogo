@@ -253,7 +253,6 @@ function eliminarProductoAdmin(id) {
         alert('Ocurrió un error en la operación.');
         document.getElementById('btn-guardar').innerText = id ? "Actualizar Producto" : "Guardar Producto";
     });
-}
 
 // 4. ELIMINAR PRODUCTO
 function eliminarProductoAdmin(id) {
