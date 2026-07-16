@@ -8,6 +8,12 @@ let carrito = [];
 document.addEventListener('DOMContentLoaded', () => {
     obtenerProductos();
     configurarFiltro();
+
+    // 1️⃣ SOLUCIÓN AL BOTÓN DE COMPRA: Enlazamos el botón de WhatsApp aquí
+    const btnComprar = document.getElementById('btn-comprar');
+    if (btnComprar) {
+        btnComprar.addEventListener('click', enviarPedidoWhatsApp);
+    }
 });
 
 // 1. CARGA Y RENDERIZADO
@@ -41,13 +47,16 @@ function renderizarProductos(productos) {
         const imagenHTML = (prod.imagen && prod.imagen.trim() !== '') 
             ? `<img src="${prod.imagen}" alt="${prod.nombre}">` : ''; 
 
+        // 2️⃣ SOLUCIÓN A LAS COMILLAS: Evita que nombres como "Guantes 'Fox'" rompan el botón
+        const nombreSeguro = prod.nombre.replace(/'/g, "\\'");
+
         tarjeta.innerHTML = `
             ${imagenHTML}
             <div class="contenido-tarjeta">
                 <h3>${prod.nombre}</h3>
                 <p>Sección: ${prod.seccion || 'A'}</p>
                 <div class="precio">$${parseFloat(prod.precio).toFixed(2)}</div>
-                <button class="btn-accion" onclick="agregarAlCarrito(${prod.id}, '${prod.nombre}', ${prod.precio})">
+                <button class="btn-accion" onclick="agregarAlCarrito(${prod.id}, '${nombreSeguro}', ${prod.precio})">
                     Comprar
                 </button>
             </div>
@@ -98,6 +107,9 @@ function actualizarCarrito() {
         total += (item.precio * item.cantidad);
         totalItems += item.cantidad;
 
+        // Limpiamos el nombre por si las dudas en la vista del carrito también
+        const nombreSeguro = item.nombre.replace(/'/g, "\\'");
+
         const li = document.createElement('li');
         li.className = 'item-carrito';
         li.innerHTML = `
@@ -128,8 +140,7 @@ function enviarPedidoWhatsApp() {
 
     mensaje += `%0A*Total: $${total.toFixed(2)}*`;
 
-    // REEMPLAZA EL 521XXXXXXXXXX POR TU NÚMERO CON CÓDIGO DE PAÍS
-    const numeroTelefono = "521XXXXXXXXXX"; 
+    const numeroTelefono = "52XXXXXXXXXX"; 
     const urlWhatsApp = `https://wa.me/${numeroTelefono}?text=${mensaje}`;
 
     window.open(urlWhatsApp, '_blank');
