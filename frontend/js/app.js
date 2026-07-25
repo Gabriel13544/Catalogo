@@ -140,7 +140,7 @@ function enviarPedidoWhatsApp() {
 
     mensaje += `%0A*Total: $${total.toFixed(2)}*`;
 
-    const numeroTelefono = "52XXXXXXXXXX"; 
+    const numeroTelefono = "5358875588"; 
     const urlWhatsApp = `https://wa.me/${numeroTelefono}?text=${mensaje}`;
 
     window.open(urlWhatsApp, '_blank');
