@@ -29,19 +29,10 @@
         <main class="seccion-productos">
             <div class="barra-filtros">
                 <label for="filtro-seccion"><strong>Mostrar Categoría:</strong></label>
-                <select id="filtro-seccion">
-                    <option value="TODAS" selected>Todas las Secciones</option>
-                    <option value="A">Sección A</option>
-                    <option value="B">Sección B</option>
-                    <option value="C">Sección C</option>
-                    <option value="D">Sección D</option>
-                    <option value="E">Sección E</option>
-                    <option value="F">Sección F</option>
-                    <option value="G">Sección G</option>
-                    <option value="H">Sección H</option>
-                    <option value="I">Sección I</option>
-                    <option value="J">Sección J</option>
-                    <option value="K">Sección K</option>
+                <!-- Menú desplegable modificado para recibir las secciones dinámicamente -->
+                <select id="filtro-seccion" onchange="filtrarProductosPorSeccion()">
+                    <option value="TODOS" selected>Todos los productos</option>
+                    <!-- Las secciones creadas en el panel de administrador aparecerán aquí automáticamente -->
                 </select>
             </div>
 
