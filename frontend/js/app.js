@@ -7,9 +7,10 @@ let carrito = [];
 
 document.addEventListener('DOMContentLoaded', () => {
     obtenerProductos();
+    cargarSeccionesCliente(); // <-- NUEVO: Carga las secciones desde la base de datos
     configurarFiltro();
 
-    // 1️⃣ SOLUCIÓN AL BOTÓN DE COMPRA: Enlazamos el botón de WhatsApp aquí
+    // 1️⃣ Enlazamos el botón de WhatsApp
     const btnComprar = document.getElementById('btn-comprar');
     if (btnComprar) {
         btnComprar.addEventListener('click', enviarPedidoWhatsApp);
@@ -47,16 +48,16 @@ function renderizarProductos(productos) {
         const imagenHTML = (prod.imagen && prod.imagen.trim() !== '') 
             ? `<img src="${prod.imagen}" alt="${prod.nombre}">` : ''; 
 
-        // 2️⃣ SOLUCIÓN A LAS COMILLAS: Evita que nombres como "Guantes 'Fox'" rompan el botón
+        // Evita que nombres con comillas rompan la función
         const nombreSeguro = prod.nombre.replace(/'/g, "\\'");
 
         tarjeta.innerHTML = `
             ${imagenHTML}
             <div class="contenido-tarjeta">
                 <h3>${prod.nombre}</h3>
-                <p>Sección: ${prod.seccion || 'A'}</p>
+                <p>Sección: ${prod.seccion || 'Sin sección'}</p>
                 <div class="precio">$${parseFloat(prod.precio).toFixed(2)}</div>
-                <button class="btn-accion" onclick="agregarAlCarrito(${prod.id}, '${nombreSeguro}', ${prod.precio})">
+                <button class="btn-accion" onclick="agregarAlCarrito('${prod.id}', '${nombreSeguro}', ${prod.precio})">
                     Comprar
                 </button>
             </div>
@@ -65,13 +66,36 @@ function renderizarProductos(productos) {
     });
 }
 
+// ==========================================
+// 📂 GESTIÓN DINÁMICA DE SECCIONES (NUEVO)
+// ==========================================
+function cargarSeccionesCliente() {
+    fetch(`${API_URL}/secciones`)
+        .then(res => res.json())
+        .then(secciones => {
+            const selectFiltro = document.getElementById('filtro-seccion');
+            if (!selectFiltro) return;
+
+            // Opción por defecto requerida
+            selectFiltro.innerHTML = '<option value="TODOS" selected>Todos los productos</option>';
+
+            secciones.forEach(sec => {
+                const opcion = document.createElement('option');
+                opcion.value = sec.nombre;
+                opcion.textContent = sec.nombre;
+                selectFiltro.appendChild(opcion);
+            });
+        })
+        .catch(err => console.error('Error al cargar secciones en la tienda:', err));
+}
+
 // 2. FILTRADO
 function configurarFiltro() {
     const selectFiltro = document.getElementById('filtro-seccion');
     if (selectFiltro) {
         selectFiltro.addEventListener('change', (e) => {
             const val = e.target.value;
-            renderizarProductos(val === 'TODAS' ? productosGlobales : productosGlobales.filter(p => p.seccion === val));
+            renderizarProductos(val === 'TODOS' ? productosGlobales : productosGlobales.filter(p => p.seccion === val));
         });
     }
 }
@@ -107,15 +131,12 @@ function actualizarCarrito() {
         total += (item.precio * item.cantidad);
         totalItems += item.cantidad;
 
-        // Limpiamos el nombre por si las dudas en la vista del carrito también
-        const nombreSeguro = item.nombre.replace(/'/g, "\\'");
-
         const li = document.createElement('li');
         li.className = 'item-carrito';
         li.innerHTML = `
             <span>${item.nombre} x${item.cantidad}</span>
             <span>$${(item.precio * item.cantidad).toFixed(2)}</span>
-            <button class="btn-eliminar-carrito" onclick="eliminarDelCarrito(${item.id})">X</button>
+            <button class="btn-eliminar-carrito" onclick="eliminarDelCarrito('${item.id}')">X</button>
         `;
         listaCarrito.appendChild(li);
     });
