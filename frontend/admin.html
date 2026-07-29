@@ -51,17 +51,7 @@
                     <label for="seccion">Seleccionar Sección/Categoría:</label>
                     <select id="seccion" required>
                         <option value="" disabled selected>-- Elige una sección --</option>
-                        <option value="A">Sección A</option>
-                        <option value="B">Sección B</option>
-                        <option value="C">Sección C</option>
-                        <option value="D">Sección D</option>
-                        <option value="E">Sección E</option>
-                        <option value="F">Sección F</option>
-                        <option value="G">Sección G</option>
-                        <option value="H">Sección H</option>
-                        <option value="I">Sección I</option>
-                        <option value="J">Sección J</option>
-                        <option value="K">Sección K</option>
+                        <!-- Las opciones ahora se cargarán DINÁMICAMENTE desde la base de datos -->
                     </select>
                 </div>
 
@@ -73,6 +63,25 @@
                 <button type="submit" id="btn-guardar" class="btn-accion">Guardar Producto</button>
                 <button type="button" id="btn-cancelar" class="btn-accion" style="display: none; background-color: #dc3545; margin-top: 10px;" onclick="cancelarEdicion()">Cancelar Edición</button>
             </form>
+
+            <!-- ========================================== -->
+            <!-- GESTOR DE SECCIONES (NUEVO)                -->
+            <!-- ========================================== -->
+            <div class="formulario-admin" style="margin-top: 30px; border-top: 2px solid #eee; padding-top: 20px;">
+                <h2 style="margin-bottom: 10px;">Gestión de Secciones</h2>
+                <p style="font-size: 14px; color: #555;">Crea nuevas categorías para organizar tus productos (Ej. Cascos, Guantes).</p>
+                
+                <div class="grupo-form" style="display: flex; gap: 10px; margin-top: 15px;">
+                    <input type="text" id="nueva-seccion" placeholder="Nombre de la nueva sección...">
+                    <button class="btn-accion" onclick="agregarSeccionAdmin()" style="width: auto; margin-top: 0;">Agregar</button>
+                </div>
+
+                <!-- Lista de secciones para visualizarlas y borrarlas -->
+                <div id="lista-secciones-admin" style="margin-top: 15px; border: 1px solid #eee; border-radius: 5px; max-height: 200px; overflow-y: auto;">
+                    <!-- Se llena con JavaScript (admin.js) -->
+                </div>
+            </div>
+            
         </main>
 
         <aside class="tarjeta-producto" style="padding: 30px;">
