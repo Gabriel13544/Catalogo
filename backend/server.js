@@ -13,7 +13,7 @@ app.use(express.urlencoded({ limit: '50mb', extended: true }));
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'biker2026';
 
 // ==========================================
-// CONEXIÓN A MONGODB Y DEFINICIÓN DEL ESQUEMA
+// CONEXIÓN A MONGODB Y DEFINICIÓN DE ESQUEMAS
 // ==========================================
 // Lee la variable MONGODB_URI desde Render o usa una local para pruebas
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/bikershop';
@@ -22,7 +22,7 @@ mongoose.connect(MONGODB_URI)
     .then(() => console.log('Conectado con éxito a la base de datos MongoDB.'))
     .catch(err => console.error('Error al conectar con MongoDB:', err.message));
 
-// Esquema y Modelo del Producto
+// 1. Esquema y Modelo del Producto
 const productoSchema = new mongoose.Schema({
     nombre: { type: String, required: true },
     precio: { type: Number, required: true },
@@ -30,8 +30,13 @@ const productoSchema = new mongoose.Schema({
     seccion: { type: String, default: 'A' },
     descripcion: { type: String, default: '' }
 });
-
 const Producto = mongoose.model('Producto', productoSchema);
+
+// 2. Esquema y Modelo de las Secciones (NUEVO)
+const seccionSchema = new mongoose.Schema({
+    nombre: { type: String, required: true, unique: true }
+});
+const Seccion = mongoose.model('Seccion', seccionSchema);
 
 // ==========================================
 // RUTAS DE AUTENTICACIÓN
@@ -44,6 +49,45 @@ app.post('/admin/login', (req, res) => {
         return res.status(401).json({ error: 'Contraseña incorrecta.' });
     }
 });
+
+// ==========================================
+// RUTAS DEL API (SECCIONES) - NUEVO
+// ==========================================
+
+// 1. Obtener todas las secciones
+app.get('/secciones', async (req, res) => {
+    try {
+        const secciones = await Seccion.find();
+        res.json(secciones.map(s => ({ id: s._id, nombre: s.nombre })));
+    } catch (err) { 
+        res.status(500).json({ error: err.message }); 
+    }
+});
+
+// 2. Crear una nueva sección
+app.post('/secciones', async (req, res) => {
+    const { nombre } = req.body;
+    if (!nombre) return res.status(400).json({ error: 'El nombre es obligatorio.' });
+    
+    try {
+        const nuevaSeccion = new Seccion({ nombre });
+        await nuevaSeccion.save();
+        res.json({ id: nuevaSeccion._id, nombre: nuevaSeccion.nombre });
+    } catch (err) { 
+        res.status(500).json({ error: err.message }); 
+    }
+});
+
+// 3. Eliminar una sección
+app.delete('/secciones/:id', async (req, res) => {
+    try {
+        await Seccion.findByIdAndDelete(req.params.id);
+        res.json({ message: 'Sección eliminada con éxito' });
+    } catch (err) { 
+        res.status(500).json({ error: err.message }); 
+    }
+});
+
 
 // ==========================================
 // RUTAS DEL API (PRODUCTOS)
