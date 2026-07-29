@@ -9,9 +9,7 @@
 }
 
 body {
-    /* 🌟 DEGRADADO: Empieza en rojo vivo (#e50914) y termina en negro puro (#000000) */
     background: linear-gradient(to bottom, #e50914, #000000);
-    /* Mantiene el fondo fijo para que no se mueva ni se rompa al hacer scroll */
     background-attachment: fixed; 
     min-height: 100vh;
     color: #333;
@@ -21,9 +19,8 @@ body {
    ENCABEZADO (Combinado con el fondo)
    ========================================== */
 .encabezado {
-    /* Fondo negro semi-transparente para que el degradado rojo se intuya detrás */
     background-color: rgba(0, 0, 0, 0.4);
-    backdrop-filter: blur(5px); /* Efecto de vidrio esmerilado moderno */
+    backdrop-filter: blur(5px); 
     color: white;
     padding: 20px;
     text-align: center;
@@ -83,7 +80,7 @@ body {
 .tarjeta-producto {
     background: white;
     border-radius: 8px;
-    overflow: hidden;
+    overflow: hidden; /* IMPORTANTE: Esto impide que el zoom se salga de la tarjeta */
     box-shadow: 0 6px 12px rgba(0,0,0,0.2);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     display: flex;
@@ -95,12 +92,23 @@ body {
     box-shadow: 0 10px 20px rgba(0,0,0,0.4);
 }
 
-/* Control exacto del tamaño de la imagen */
+/* ==========================================
+   CONFIGURACIÓN DE IMÁGENES (NUEVO: 800X800 + ZOOM)
+   ========================================== */
 .tarjeta-producto img {
     width: 100%;
-    height: 180px;
+    max-width: 800px; 
+    aspect-ratio: 1 / 1; /* Mantiene proporción cuadrada 800x800 */
     object-fit: cover;
     border-bottom: 1px solid #eee;
+    cursor: zoom-in; /* Cambia el cursor a una lupa */
+    transition: transform 0.3s ease; /* Hace que el zoom sea suave */
+}
+
+/* Efecto de Zoom al hacer clic / presionar */
+.tarjeta-producto img:active {
+    transform: scale(1.3); /* Agranda la imagen un 30% al hacer clic */
+    cursor: zoom-out;
 }
 
 .contenido-tarjeta {
@@ -108,6 +116,9 @@ body {
     display: flex;
     flex-direction: column;
     flex-grow: 1;
+    background: white; /* Asegura fondo sólido por si el zoom desplaza algo */
+    position: relative; /* Asegura que el contenido quede por encima del zoom */
+    z-index: 2;
 }
 
 .contenido-tarjeta h3 {
@@ -136,7 +147,6 @@ body {
 /* ==========================================
    CARRITO LATERAL
    ========================================== */
-
 .seccion-carrito {
     flex: 1;
     min-width: 300px;
@@ -144,7 +154,7 @@ body {
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    height: fit-content; /* Para que no se estire de más */
+    height: fit-content;
     position: sticky;
     top: 20px;
 }
@@ -180,25 +190,20 @@ body {
 /* ==========================================
    BOTONES
    ========================================== */
-
 .btn-accion {
-    background-color: #28a745; /* Verde profesional */
+    background-color: #28a745; 
     color: white;
     padding: 10px 20px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    width: 100%; /* Para que ocupe todo el ancho del carrito */
+    width: 100%;
     font-size: 16px;
     margin-top: 10px;
 }
 
 .btn-accion:hover {
-    background-color: #218838; /* Un verde un poco más oscuro al pasar el ratón */
-}
-
-.btn-accion:hover {
-    background-color: #218838;
+    background-color: #218838; 
 }
 
 .btn-eliminar-carrito {
@@ -242,7 +247,6 @@ body {
     transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-/* Efecto visual cuando haces clic para escribir */
 .formulario-admin input:focus,
 .formulario-admin select:focus,
 .formulario-admin textarea:focus {
@@ -252,7 +256,6 @@ body {
     background-color: white;
 }
 
-/* Estilo para las filas de productos a eliminar */
 .lista-admin > div {
     transition: background-color 0.2s;
     border-radius: 4px;
@@ -265,26 +268,17 @@ body {
 /* ==========================================
    ANIMACIONES (@keyframes)
    ========================================== */
-/* Animación para que la página y las tarjetas aparezcan suavemente desde abajo */
 @keyframes aparecerSuave {
-    0% {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    100% {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    0% { opacity: 0; transform: translateY(30px); }
+    100% { opacity: 1; transform: translateY(0); }
 }
 
-/* Animación de destello suave para el encabezado */
 @keyframes brillar {
     0% { box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
     50% { box-shadow: 0 4px 15px rgba(229, 9, 20, 0.5); }
     100% { box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
 }
 
-/* Aplicando las animaciones a los elementos */
 .tarjeta-producto, .seccion-carrito, .formulario-admin {
     animation: aparecerSuave 0.6s ease-out forwards;
 }
@@ -300,21 +294,21 @@ body {
 /* 1. Monitores muy grandes y Macs (Más de 1200px) */
 @media (min-width: 1201px) {
     .contenedor-principal {
-        max-width: 1400px; /* Se expande un poco más para aprovechar la pantalla */
+        max-width: 1400px;
     }
     .grid-productos {
-        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Tarjetas más anchas */
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Tarjetas más anchas para que la imagen se luzca */
     }
 }
 
 /* 2. Laptops y Tablets (Hasta 1024px) */
 @media (max-width: 1024px) {
     .contenedor-principal {
-        flex-direction: column; /* El carrito pasa abajo de los productos */
+        flex-direction: column;
     }
     .seccion-carrito {
         width: 100%;
-        position: relative; /* Deja de estar pegado arriba */
+        position: relative;
         top: 0;
     }
 }
@@ -331,9 +325,7 @@ body {
     .grid-productos {
         grid-template-columns: 1fr; /* Una sola columna para que las fotos se vean grandes */
     }
-    .tarjeta-producto img {
-        height: 220px;
-    }
+    /* Eliminamos el height fijo de aquí porque el aspect-ratio: 1/1 ya hace el trabajo arriba */
 }
 
 /* 4. Teléfonos Móviles Estándar (Hasta 360px) */
@@ -359,7 +351,7 @@ body {
 /* 5. Pantallas Ultra Pequeñas / Dispositivos Antiguos (Hasta 240px) */
 @media (max-width: 240px) {
     .contenedor-principal {
-        padding: 0 10px; /* Reducimos los bordes al máximo */
+        padding: 0 10px;
     }
     .encabezado img {
         width: 45px;
@@ -377,9 +369,6 @@ body {
     .barra-filtros select {
         width: 100%;
         margin-left: 0;
-        margin-top: 10px; /* El selector pasa a la línea de abajo por falta de espacio */
-    }
-    .tarjeta-producto img {
-        height: 150px;
+        margin-top: 10px;
     }
 }
