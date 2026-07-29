@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const pantallaLogin = document.getElementById('pantalla-login');
         if (pantallaLogin) pantallaLogin.style.display = 'none';
         obtenerProductosAdmin();
+        cargarSeccionesAdmin(); // <-- NUEVO: Carga las secciones al entrar
     }
     
     // Escuchar cuando el usuario seleccione una foto del dispositivo
@@ -25,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ==========================================
-// 🔐 NUEVO: CONTROL DE ACCESO (LOGIN)
+// 🔐 CONTROL DE ACCESO (LOGIN)
 // ==========================================
 function verificarPassword() {
     const passwordInput = document.getElementById('input-password');
@@ -65,6 +66,7 @@ function verificarPassword() {
             if (pantallaLogin) pantallaLogin.style.display = 'none';
             
             obtenerProductosAdmin();
+            cargarSeccionesAdmin(); // <-- NUEVO: Carga las secciones al loguearse
         }
     })
     .catch(err => {
@@ -97,6 +99,92 @@ function procesarImagen(e) {
 }
 
 // ==========================================
+// 📂 GESTIÓN DINÁMICA DE SECCIONES (NUEVO)
+// ==========================================
+
+// 1. Cargar las secciones desde la base de datos
+function cargarSeccionesAdmin() {
+    fetch(`${API_URL}/secciones`)
+        .then(res => res.json())
+        .then(secciones => {
+            const selectProducto = document.getElementById('seccion');
+            const contenedorLista = document.getElementById('lista-secciones-admin');
+            
+            // Limpiamos los contenedores y dejamos la opción por defecto en el select
+            if (selectProducto) selectProducto.innerHTML = '<option value="" disabled selected>-- Elige una sección --</option>';
+            if (contenedorLista) contenedorLista.innerHTML = '';
+
+            secciones.forEach(sec => {
+                // Llenar el menú desplegable
+                if (selectProducto) {
+                    const opcion = document.createElement('option');
+                    opcion.value = sec.nombre;
+                    opcion.textContent = sec.nombre;
+                    selectProducto.appendChild(opcion);
+                }
+
+                // Llenar la lista para administrar (eliminar)
+                if (contenedorLista) {
+                    const div = document.createElement('div');
+                    div.style.display = "flex";
+                    div.style.justifyContent = "space-between";
+                    div.style.padding = "8px 10px";
+                    div.style.borderBottom = "1px solid #eee";
+                    div.style.alignItems = "center";
+                    
+                    div.innerHTML = `
+                        <span>${sec.nombre}</span>
+                        <button onclick="eliminarSeccionAdmin('${sec.id}')" class="btn-eliminar-carrito">Eliminar</button>
+                    `;
+                    contenedorLista.appendChild(div);
+                }
+            });
+        })
+        .catch(err => console.error('Error al cargar secciones:', err));
+}
+
+// 2. Agregar una nueva sección
+function agregarSeccionAdmin() {
+    const nombreInput = document.getElementById('nueva-seccion');
+    const nombre = nombreInput.value.trim();
+
+    if (!nombre) {
+        alert('Por favor, escribe un nombre para la sección.');
+        return;
+    }
+
+    fetch(`${API_URL}/secciones`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nombre })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.error) {
+            alert('Error: ' + data.error); // Por si se intenta crear una sección duplicada
+        } else {
+            alert('¡Sección agregada con éxito!');
+            nombreInput.value = ''; // Limpiar el input
+            cargarSeccionesAdmin(); // Recargar la lista y el menú desplegable
+        }
+    })
+    .catch(err => console.error('Error al crear sección:', err));
+}
+
+// 3. Eliminar una sección
+function eliminarSeccionAdmin(id) {
+    if (!confirm('¿Estás seguro de que deseas eliminar esta sección? Esto NO eliminará los productos que ya tengan este nombre guardado, solo lo quitará de la lista.')) return;
+
+    fetch(`${API_URL}/secciones/${id}`, { method: 'DELETE' })
+        .then(res => res.json())
+        .then(() => {
+            alert('Sección eliminada.');
+            cargarSeccionesAdmin(); // Recargar la lista
+        })
+        .catch(err => console.error('Error al eliminar sección:', err));
+}
+
+// ==========================================
 // 🛒 GESTIÓN DE PRODUCTOS (GET, POST, PUT, DELETE)
 // ==========================================
 
@@ -113,12 +201,12 @@ function obtenerProductosAdmin() {
             productos.forEach(prod => {
                 const div = document.createElement('div');
                 div.className = 'item-admin-producto';
-                div.style = "display: flex; justify-content: space-between; margin-bottom: 10px; padding: 10px; border-bottom: 1px solid #ccc;";
+                div.style = "display: flex; justify-content: space-between; margin-bottom: 10px; padding: 10px; border-bottom: 1px solid #ccc; align-items: center;";
                 div.innerHTML = `
                     <span><strong>${prod.nombre}</strong> - $${parseFloat(prod.precio).toFixed(2)} (${prod.seccion})</span>
                     <div>
-                        <button class="btn-editar" style="background-color: #ffc107; border: none; padding: 5px 10px; cursor: pointer; margin-right: 5px; border-radius: 3px;" onclick="cargarFormularioEditar(${prod.id})">Editar</button>
-                        <button class="btn-eliminar" style="background-color: #dc3545; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 3px;" onclick="eliminarProductoAdmin(${prod.id})">Eliminar</button>
+                        <button class="btn-editar" style="background-color: #ffc107; border: none; padding: 5px 10px; cursor: pointer; margin-right: 5px; border-radius: 3px;" onclick="cargarFormularioEditar('${prod.id}')">Editar</button>
+                        <button class="btn-eliminar" style="background-color: #dc3545; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 3px;" onclick="eliminarProductoAdmin('${prod.id}')">Eliminar</button>
                     </div>
                 `;
                 lista.appendChild(div);
@@ -136,7 +224,7 @@ function cargarFormularioEditar(id) {
     document.getElementById('producto-id').value = producto.id;
     document.getElementById('nombre').value = producto.nombre;
     document.getElementById('precio').value = producto.precio;
-    document.getElementById('seccion').value = producto.seccion || 'A';
+    document.getElementById('seccion').value = producto.seccion || '';
     document.getElementById('descripcion').value = producto.descripcion || '';
     
     // Mantener la imagen vieja en memoria por si no sube una nueva
@@ -151,6 +239,9 @@ function cargarFormularioEditar(id) {
     document.getElementById('btn-guardar').innerText = "Actualizar Producto";
     document.getElementById('btn-guardar').style.backgroundColor = "#007bff"; // Azul para editar
     document.getElementById('btn-cancelar').style.display = "inline-block";
+    
+    // Scrollear hacia arriba suavemente
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 // Cancelar edición y limpiar formulario
@@ -162,7 +253,7 @@ function cancelarEdicion() {
     
     const btnGuardar = document.getElementById('btn-guardar');
     btnGuardar.innerText = "Guardar Producto";
-    btnGuardar.style.backgroundColor = ""; // Regresa al estilo CSS por defecto (o pon #28a745)
+    btnGuardar.style.backgroundColor = ""; 
     document.getElementById('btn-cancelar').style.display = "none";
 }
 
@@ -213,46 +304,6 @@ function guardarOActualizarProducto(e) {
         btnGuardar.innerText = id ? "Actualizar Producto" : "Guardar Producto";
     });
 }
-
-// 4. ELIMINAR PRODUCTO
-function eliminarProductoAdmin(id) {
-    if (!confirm('¿Estás seguro de que deseas eliminar este producto?')) return;
-
-    fetch(`${API_URL}/productos/${id}`, { method: 'DELETE' })
-        .then(res => res.json())
-        .then(() => {
-            alert('Producto eliminado.');
-            obtenerProductosAdmin();
-        })
-        .catch(err => console.error('Error al eliminar:', err));
-}
-    let url = `${API_URL}/productos`;
-    let metodo = 'POST';
-
-    // Si el ID oculto tiene número, significa que estamos EDITANDO en lugar de crear
-    if (id) {
-        url = `${API_URL}/productos/${id}`;
-        metodo = 'PUT';
-    }
-
-    document.getElementById('btn-guardar').innerText = "Procesando...";
-
-    fetch(url, {
-        method: metodo,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(datosProducto)
-    })
-    .then(res => res.json())
-    .then(() => {
-        alert(id ? "¡Producto actualizado correctamente!" : "¡Producto creado correctamente!");
-        cancelarEdicion(); // Limpia el formulario y reestablece botones
-        obtenerProductosAdmin(); // Recarga la lista visible
-    })
-    .catch(err => {
-        console.error('Error al guardar/actualizar:', err);
-        alert('Ocurrió un error en la operación.');
-        document.getElementById('btn-guardar').innerText = id ? "Actualizar Producto" : "Guardar Producto";
-    });
 
 // 4. ELIMINAR PRODUCTO
 function eliminarProductoAdmin(id) {
