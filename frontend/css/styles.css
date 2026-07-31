@@ -1,6 +1,7 @@
 /* ==========================================
    CONFIGURACIÓN GENERAL Y FONDO GRADIENT
    ========================================== */
+
 * {
     margin: 0;
     padding: 0;
@@ -256,17 +257,29 @@ body {
     background-color: white;
 }
 
+/* Corrección del contenedor de selección de imagen */
+.formulario-admin input[type="file"] {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    border: none;
+    background: transparent;
+    padding: 0;
+}
+
 /* Botón estilizado para la carga de imágenes */
 input[type="file"]::file-selector-button {
     background-color: #212529;
     color: #ffffff;
     border: none;
-    padding: 8px 14px;
-    border-radius: 5px;
+    padding: 10px 16px;
+    border-radius: 6px;
     cursor: pointer;
     font-size: 14px;
     font-weight: 500;
     margin-right: 10px;
+    max-width: 100%;
+    box-sizing: border-box;
     transition: background-color 0.2s ease;
 }
 
@@ -388,9 +401,11 @@ input[type="file"]::file-selector-button:hover {
     .grid-productos {
         grid-template-columns: 1fr;
     }
+    /* El botón de imagen se mantiene contenido dentro de los márgenes */
     input[type="file"]::file-selector-button {
-        width: 100%;
-        margin-bottom: 8px;
+        display: inline-block;
+        width: auto;
+        max-width: 100%;
     }
 }
 
@@ -437,267 +452,4 @@ input[type="file"]::file-selector-button:hover {
         margin-left: 0;
         margin-top: 10px;
     }
-}
-
-
-.contenido-tarjeta {
-    padding: 15px;
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-    background: white; /* Asegura fondo sólido por si el zoom desplaza algo */
-    position: relative; /* Asegura que el contenido quede por encima del zoom */
-    z-index: 2;
-}
-
-.contenido-tarjeta h3 {
-    font-size: 18px;
-    margin-bottom: 5px;
-}
-
-.etiqueta-seccion {
-    font-size: 12px;
-    background: #e3f2fd;
-    color: #1976d2;
-    padding: 3px 6px;
-    border-radius: 4px;
-    display: inline-block;
-    margin-bottom: 10px;
-    width: fit-content;
-}
-
-.precio {
-    font-size: 20px;
-    font-weight: bold;
-    color: #28a745;
-    margin: 10px 0;
-}
-
-/* ==========================================
-   CARRITO LATERAL
-   ========================================== */
-.seccion-carrito {
-    flex: 1;
-    min-width: 300px;
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    height: fit-content;
-    position: sticky;
-    top: 20px;
-}
-
-.seccion-carrito h3 {
-    border-bottom: 2px solid #eee;
-    padding-bottom: 10px;
-    margin-bottom: 15px;
-}
-
-#lista-carrito {
-    list-style: none;
-    max-height: 400px;
-    overflow-y: auto;
-}
-
-#lista-carrito li {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 10px;
-    border-bottom: 1px solid #f0f0f0;
-    padding-bottom: 5px;
-}
-
-.total-seccion {
-    margin-top: 20px;
-    font-size: 22px;
-    text-align: right;
-    border-top: 2px solid #eee;
-    padding-top: 15px;
-}
-
-/* ==========================================
-   BOTONES
-   ========================================== */
-.btn-accion {
-    background-color: #28a745; 
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    width: 100%;
-    font-size: 16px;
-    margin-top: 10px;
-}
-
-.btn-accion:hover {
-    background-color: #218838; 
-}
-
-.btn-eliminar-carrito {
-    background-color: #ff4d4d;
-    color: white;
-    border: none;
-    padding: 2px 8px;
-    cursor: pointer;
-    border-radius: 4px;
-    font-size: 12px;
-}
-
-.btn-eliminar-carrito:hover {
-    background-color: #cc0000;
-}
-
-/* ==========================================
-   ESTILOS DEL PANEL DE ADMINISTRACIÓN
-   ========================================== */
-.formulario-admin .grupo-form {
-    margin-bottom: 15px;
-}
-
-.formulario-admin label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-    color: #444;
-}
-
-.formulario-admin input[type="text"],
-.formulario-admin input[type="number"],
-.formulario-admin select,
-.formulario-admin textarea {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 16px;
-    background-color: #fafafa;
-    transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.formulario-admin input:focus,
-.formulario-admin select:focus,
-.formulario-admin textarea:focus {
-    border-color: #28a745;
-    outline: none;
-    box-shadow: 0 0 5px rgba(40, 167, 69, 0.3);
-    background-color: white;
-}
-
-.lista-admin > div {
-    transition: background-color 0.2s;
-    border-radius: 4px;
-}
-
-.lista-admin > div:hover {
-    background-color: #f9f9f9;
-}
-
-/* ==========================================
-   ANIMACIONES (@keyframes)
-   ========================================== */
-@keyframes aparecerSuave {
-    0% { opacity: 0; transform: translateY(30px); }
-    100% { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes brillar {
-    0% { box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
-    50% { box-shadow: 0 4px 15px rgba(229, 9, 20, 0.5); }
-    100% { box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
-}
-
-.tarjeta-producto, .seccion-carrito, .formulario-admin {
-    animation: aparecerSuave 0.6s ease-out forwards;
-}
-
-.encabezado {
-    animation: brillar 3s infinite;
-}
-
-/* ==========================================
-   RESPONSIVIDAD (@media queries)
-   ========================================== */
-
-/* 1. Monitores muy grandes y Macs (Más de 1200px) */
-@media (min-width: 1201px) {
-    .contenedor-principal {
-        max-width: 1400px;
-    }
-    .grid-productos {
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Tarjetas más anchas para que la imagen se luzca */
-    }
-}
-
-/* 2. Laptops y Tablets (Hasta 1024px) */
-@media (max-width: 1024px) {
-    .contenedor-principal {
-        flex-direction: column;
-    }
-    .seccion-carrito {
-        width: 100%;
-        position: relative;
-        top: 0;
-    }
-}
-
-/* 3. Teléfonos Móviles Grandes (Hasta 480px) */
-@media (max-width: 480px) {
-    .encabezado h1 {
-        font-size: 24px;
-    }
-    .encabezado img {
-        width: 60px;
-        height: 60px;
-    }
-    .grid-productos {
-        grid-template-columns: 1fr; /* Una sola columna para que las fotos se vean grandes */
-    }
-    /* Eliminamos el height fijo de aquí porque el aspect-ratio: 1/1 ya hace el trabajo arriba */
-}
-
-/* 4. Teléfonos Móviles Estándar (Hasta 360px) */
-@media (max-width: 360px) {
-    .encabezado h1 {
-        font-size: 20px;
-    }
-    .contenido-tarjeta {
-        padding: 10px;
-    }
-    .contenido-tarjeta h3 {
-        font-size: 16px;
-    }
-    .precio {
-        font-size: 18px;
-    }
-    .btn-accion {
-        padding: 8px;
-        font-size: 14px;
-    }
-}
-
-/* 5. Pantallas Ultra Pequeñas / Dispositivos Antiguos (Hasta 240px) */
-@media (max-width: 240px) {
-    .contenedor-principal {
-        padding: 0 10px;
-    }
-    .encabezado img {
-        width: 45px;
-        height: 45px;
-    }
-    .encabezado h1 {
-        font-size: 16px;
-    }
-    .encabezado p {
-        font-size: 12px;
-    }
-    .barra-filtros {
-        padding: 10px;
-    }
-    .barra-filtros select {
-        width: 100%;
-        margin-left: 0;
-        margin-top: 10px;
-    }
-}
+   }
