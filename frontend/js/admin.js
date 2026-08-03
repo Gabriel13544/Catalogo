@@ -1,319 +1,175 @@
 const API_URL = 'https://tienda-bikershop.onrender.com';
-let todosLosProductos = []; 
-let imagenBase64Actual = ""; // Guardará el texto de la imagen seleccionada
+
+let listaProductos = [];
 
 document.addEventListener('DOMContentLoaded', () => {
-    // 🛡️ COMPROBACIÓN DE SEGURIDAD
-    // Si el administrador ya inició sesión con éxito en esta pestaña, ocultamos el login y cargamos todo.
-    if (sessionStorage.getItem('admin_autenticado') === 'true') {
-        const pantallaLogin = document.getElementById('pantalla-login');
-        if (pantallaLogin) pantallaLogin.style.display = 'none';
-        obtenerProductosAdmin();
-        cargarSeccionesAdmin(); // <-- NUEVO: Carga las secciones al entrar
-    }
-    
-    // Escuchar cuando el usuario seleccione una foto del dispositivo
-    const inputImagen = document.getElementById('imagen-archivo');
-    if (inputImagen) {
-        inputImagen.addEventListener('change', procesarImagen);
-    }
+    cargarProductosAdmin();
 
-    // Escuchar el envío del formulario
-    const formulario = document.getElementById('formulario-producto');
-    if (formulario) {
-        formulario.addEventListener('submit', guardarOActualizarProducto);
+    const form = document.getElementById('form-producto');
+    if (form) {
+        form.addEventListener('submit', guardarProducto);
     }
 });
 
-// ==========================================
-// 🔐 CONTROL DE ACCESO (LOGIN)
-// ==========================================
-function verificarPassword() {
-    const passwordInput = document.getElementById('input-password');
-    const errorMsg = document.getElementById('error-login');
-    const btnIngresar = document.getElementById('btn-ingresar');
-    const password = passwordInput ? passwordInput.value : '';
-
-    if (!password) {
-        alert("Por favor, ingresa una contraseña.");
-        return;
-    }
-
-    // ⏳ Efecto de carga: Deshabilitamos el botón para evitar clics dobles mientras Render despierta
-    if (btnIngresar) {
-        btnIngresar.innerText = "Verificando... (Espere)";
-        btnIngresar.disabled = true;
-    }
-    if (errorMsg) errorMsg.style.display = 'none';
-
-    fetch(`${API_URL}/admin/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password })
-    })
-    .then(res => {
-        if (!res.ok) {
-            throw new Error('Contraseña incorrecta');
-        }
-        return res.json();
-    })
-    .then(data => {
-        if (data.success) {
-            // Guardamos sesión activa
-            sessionStorage.setItem('admin_autenticado', 'true');
-            
-            const pantallaLogin = document.getElementById('pantalla-login');
-            if (pantallaLogin) pantallaLogin.style.display = 'none';
-            
-            obtenerProductosAdmin();
-            cargarSeccionesAdmin(); // <-- NUEVO: Carga las secciones al loguearse
-        }
-    })
-    .catch(err => {
-        console.error('Error de autenticación:', err);
-        if (errorMsg) errorMsg.style.display = 'block';
-        if (passwordInput) passwordInput.value = ''; // Limpiar input para reintentar
-    })
-    .finally(() => {
-        // Restablecemos el botón una vez que la petición termine
-        if (btnIngresar) {
-            btnIngresar.innerText = "Ingresar";
-            btnIngresar.disabled = false;
-        }
-    });
-}
-
-// ==========================================
-// 📸 PROCESAMIENTO DE IMÁGENES
-// ==========================================
-function procesarImagen(e) {
-    const archivo = e.target.files[0];
-    if (!archivo) return;
-
-    const reader = new FileReader();
-    reader.onload = function (event) {
-        imagenBase64Actual = event.target.result; // El texto listo para la base de datos
-        document.getElementById('vista-previa-imagen').innerHTML = `<img src="${imagenBase64Actual}" style="max-width: 100px; border-radius: 5px;">`;
-    };
-    reader.readAsDataURL(archivo);
-}
-
-// ==========================================
-// 📂 GESTIÓN DINÁMICA DE SECCIONES (NUEVO)
-// ==========================================
-
-// 1. Cargar las secciones desde la base de datos
-function cargarSeccionesAdmin() {
-    fetch(`${API_URL}/secciones`)
-        .then(res => res.json())
-        .then(secciones => {
-            const selectProducto = document.getElementById('seccion');
-            const contenedorLista = document.getElementById('lista-secciones-admin');
-            
-            // Limpiamos los contenedores y dejamos la opción por defecto en el select
-            if (selectProducto) selectProducto.innerHTML = '<option value="" disabled selected>-- Elige una sección --</option>';
-            if (contenedorLista) contenedorLista.innerHTML = '';
-
-            secciones.forEach(sec => {
-                // Llenar el menú desplegable
-                if (selectProducto) {
-                    const opcion = document.createElement('option');
-                    opcion.value = sec.nombre;
-                    opcion.textContent = sec.nombre;
-                    selectProducto.appendChild(opcion);
-                }
-
-                // Llenar la lista para administrar (eliminar)
-                if (contenedorLista) {
-                    const div = document.createElement('div');
-                    div.style.display = "flex";
-                    div.style.justifyContent = "space-between";
-                    div.style.padding = "8px 10px";
-                    div.style.borderBottom = "1px solid #eee";
-                    div.style.alignItems = "center";
-                    
-                    div.innerHTML = `
-                        <span>${sec.nombre}</span>
-                        <button onclick="eliminarSeccionAdmin('${sec.id}')" class="btn-eliminar-carrito">Eliminar</button>
-                    `;
-                    contenedorLista.appendChild(div);
-                }
-            });
-        })
-        .catch(err => console.error('Error al cargar secciones:', err));
-}
-
-// 2. Agregar una nueva sección
-function agregarSeccionAdmin() {
-    const nombreInput = document.getElementById('nueva-seccion');
-    const nombre = nombreInput.value.trim();
-
-    if (!nombre) {
-        alert('Por favor, escribe un nombre para la sección.');
-        return;
-    }
-
-    fetch(`${API_URL}/secciones`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nombre })
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.error) {
-            alert('Error: ' + data.error); // Por si se intenta crear una sección duplicada
-        } else {
-            alert('¡Sección agregada con éxito!');
-            nombreInput.value = ''; // Limpiar el input
-            cargarSeccionesAdmin(); // Recargar la lista y el menú desplegable
-        }
-    })
-    .catch(err => console.error('Error al crear sección:', err));
-}
-
-// 3. Eliminar una sección
-function eliminarSeccionAdmin(id) {
-    if (!confirm('¿Estás seguro de que deseas eliminar esta sección? Esto NO eliminará los productos que ya tengan este nombre guardado, solo lo quitará de la lista.')) return;
-
-    fetch(`${API_URL}/secciones/${id}`, { method: 'DELETE' })
-        .then(res => res.json())
-        .then(() => {
-            alert('Sección eliminada.');
-            cargarSeccionesAdmin(); // Recargar la lista
-        })
-        .catch(err => console.error('Error al eliminar sección:', err));
-}
-
-// ==========================================
-// 🛒 GESTIÓN DE PRODUCTOS (GET, POST, PUT, DELETE)
-// ==========================================
-
-// 1. OBTENER Y LISTAR PRODUCTOS CON EL BOTÓN "EDITAR"
-function obtenerProductosAdmin() {
+// 1. CARGAR INVENTARIO DE PRODUCTOS
+function cargarProductosAdmin() {
+    const contenedor = document.getElementById('lista-admin-productos');
+    
     fetch(`${API_URL}/productos`)
         .then(res => res.json())
         .then(productos => {
-            todosLosProductos = productos;
-            const lista = document.getElementById('lista-productos-existentes');
-            if (!lista) return;
-            
-            lista.innerHTML = '';
-            productos.forEach(prod => {
-                const div = document.createElement('div');
-                div.className = 'item-admin-producto';
-                div.style = "display: flex; justify-content: space-between; margin-bottom: 10px; padding: 10px; border-bottom: 1px solid #ccc; align-items: center;";
-                div.innerHTML = `
-                    <span><strong>${prod.nombre}</strong> - $${parseFloat(prod.precio).toFixed(2)} (${prod.seccion})</span>
-                    <div>
-                        <button class="btn-editar" style="background-color: #ffc107; border: none; padding: 5px 10px; cursor: pointer; margin-right: 5px; border-radius: 3px;" onclick="cargarFormularioEditar('${prod.id}')">Editar</button>
-                        <button class="btn-eliminar" style="background-color: #dc3545; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 3px;" onclick="eliminarProductoAdmin('${prod.id}')">Eliminar</button>
-                    </div>
-                `;
-                lista.appendChild(div);
-            });
+            listaProductos = productos;
+            renderizarInventario(listaProductos);
         })
-        .catch(err => console.error('Error al cargar lista de administración:', err));
+        .catch(err => {
+            console.error('Error al obtener inventario:', err);
+            contenedor.innerHTML = '<p style="color:red;">Error al conectar con el servidor.</p>';
+        });
 }
 
-// 2. FUNCIÓN AL PRESIONAR "EDITAR": Pone los datos del producto en el formulario
-function cargarFormularioEditar(id) {
-    const producto = todosLosProductos.find(p => p.id === id);
-    if (!producto) return;
+// 2. RENDERIZAR LISTA CON CATEGORÍA Y SUBCATEGORÍA
+function renderizarInventario(productos) {
+    const contenedor = document.getElementById('lista-admin-productos');
+    contenedor.innerHTML = '';
 
-    // Rellenar casillas
-    document.getElementById('producto-id').value = producto.id;
-    document.getElementById('nombre').value = producto.nombre;
-    document.getElementById('precio').value = producto.precio;
-    document.getElementById('seccion').value = producto.seccion || '';
-    document.getElementById('descripcion').value = producto.descripcion || '';
-    
-    // Mantener la imagen vieja en memoria por si no sube una nueva
-    imagenBase64Actual = producto.imagen || '';
-    if (producto.imagen) {
-        document.getElementById('vista-previa-imagen').innerHTML = `<p style="margin: 5px 0; font-size: 14px; color: #555;">Imagen actual:</p><img src="${producto.imagen}" style="max-width: 100px; border-radius: 5px;">`;
-    } else {
-        document.getElementById('vista-previa-imagen').innerHTML = '';
+    if (productos.length === 0) {
+        contenedor.innerHTML = '<p style="color: #777;">No hay productos registrados.</p>';
+        return;
     }
 
-    // Cambiar aspecto del botón para avisar que edita
-    document.getElementById('btn-guardar').innerText = "Actualizar Producto";
-    document.getElementById('btn-guardar').style.backgroundColor = "#007bff"; // Azul para editar
-    document.getElementById('btn-cancelar').style.display = "inline-block";
-    
-    // Scrollear hacia arriba suavemente
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    productos.forEach(prod => {
+        const item = document.createElement('div');
+        item.className = 'item-admin-producto';
+        
+        item.innerHTML = `
+            <div style="flex: 1;">
+                <strong>${prod.nombre}</strong> - <span style="color: #28a745; font-weight: bold;">$${parseFloat(prod.precio).toFixed(2)}</span>
+                <div style="font-size: 12px; color: #666; margin-top: 4px;">
+                    📂 <b>Categoría:</b> ${prod.categoria || prod.seccion || 'N/A'} | 
+                    🏷️ <b>Subcategoría:</b> ${prod.subcategoria || 'N/A'}
+                </div>
+            </div>
+            <div style="display: flex; gap: 6px;">
+                <button class="btn-editar" onclick="prepararEdicion('${prod.id}')">✏️ Editar</button>
+                <button class="btn-eliminar" onclick="eliminarProducto('${prod.id}')">🗑️ Eliminar</button>
+            </div>
+        `;
+        contenedor.appendChild(item);
+    });
 }
 
-// Cancelar edición y limpiar formulario
-function cancelarEdicion() {
-    document.getElementById('formulario-producto').reset();
-    document.getElementById('producto-id').value = '';
-    imagenBase64Actual = '';
-    document.getElementById('vista-previa-imagen').innerHTML = '';
-    
-    const btnGuardar = document.getElementById('btn-guardar');
-    btnGuardar.innerText = "Guardar Producto";
-    btnGuardar.style.backgroundColor = ""; 
-    document.getElementById('btn-cancelar').style.display = "none";
+// 3. FILTRAR INVENTARIO EN TIEMPO REAL
+function filtrarInventarioAdmin() {
+    const query = document.getElementById('input-admin-buscar').value.toLowerCase().trim();
+    const filtrados = listaProductos.filter(p => 
+        p.nombre.toLowerCase().includes(query) ||
+        (p.categoria && p.categoria.toLowerCase().includes(query)) ||
+        (p.subcategoria && p.subcategoria.toLowerCase().includes(query))
+    );
+    renderizarInventario(filtrados);
 }
 
-// 3. PROCESAR CREACIÓN O ACTUALIZACIÓN
-function guardarOActualizarProducto(e) {
+// 4. GUARDAR O ACTUALIZAR PRODUCTO
+async function guardarProducto(e) {
     e.preventDefault();
 
-    const id = document.getElementById('producto-id').value;
-    const nombre = document.getElementById('nombre').value;
-    const precio = document.getElementById('precio').value;
-    const seccion = document.getElementById('seccion').value;
-    const descripcion = document.getElementById('descripcion').value;
+    const id = document.getElementById('prod-id').value;
+    const nombre = document.getElementById('prod-nombre').value.trim();
+    const precio = parseFloat(document.getElementById('prod-precio').value);
+    const categoria = document.getElementById('prod-categoria').value.trim();
+    const subcategoria = document.getElementById('prod-subcategoria').value.trim();
+    const urlImagenInput = document.getElementById('prod-imagen-url').value.trim();
+    const archivoImagenInput = document.getElementById('prod-imagen-file').files[0];
 
-    const datosProducto = {
-        nombre,
-        precio: parseFloat(precio),
-        imagen: imagenBase64Actual, // Enviamos el texto de la imagen
-        seccion,
-        descripcion
-    };
+    let imagenFinal = urlImagenInput;
 
-    let url = `${API_URL}/productos`;
-    let metodo = 'POST';
-
-    // Si el ID oculto tiene número, significa que estamos EDITANDO en lugar de crear
-    if (id) {
-        url = `${API_URL}/productos/${id}`;
-        metodo = 'PUT';
+    // Convertir imagen local a Base64 si se adjuntó un archivo
+    if (archivoImagenInput) {
+        imagenFinal = await convertirBase64(archivoImagenInput);
     }
 
-    const btnGuardar = document.getElementById('btn-guardar');
-    btnGuardar.innerText = "Procesando...";
+    const payload = {
+        nombre,
+        precio,
+        categoria,      // Ej. "AX100"
+        seccion: categoria, // Mantenemos compatibilidad por si se usa en el backend
+        subcategoria,   // Ej. "Asientos"
+        imagen: imagenFinal
+    };
+
+    const metodo = id ? 'PUT' : 'POST';
+    const url = id ? `${API_URL}/productos/${id}` : `${API_URL}/productos`;
 
     fetch(url, {
         method: metodo,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(datosProducto)
+        body: JSON.stringify(payload)
     })
-    .then(res => res.json())
+    .then(res => {
+        if (!res.ok) throw new Error('Error al guardar el producto.');
+        return res.json();
+    })
     .then(() => {
-        alert(id ? "¡Producto actualizado correctamente!" : "¡Producto creado correctamente!");
-        cancelarEdicion(); // Limpia el formulario y reestablece botones
-        obtenerProductosAdmin(); // Recarga la lista visible
+        alert(id ? '✅ Producto actualizado correctamente.' : '✅ Producto agregado al catálogo.');
+        resetearFormulario();
+        cargarProductosAdmin();
     })
     .catch(err => {
-        console.error('Error al guardar/actualizar:', err);
-        alert('Ocurrió un error en la operación.');
-        btnGuardar.innerText = id ? "Actualizar Producto" : "Guardar Producto";
+        console.error(err);
+        alert('❌ Ocurrió un error al guardar el producto.');
     });
 }
 
-// 4. ELIMINAR PRODUCTO
-function eliminarProductoAdmin(id) {
+// 5. PREPARAR FORMULARIO PARA EDICIÓN
+function prepararEdicion(id) {
+    const prod = listaProductos.find(p => p.id === id);
+    if (!prod) return;
+
+    document.getElementById('prod-id').value = prod.id;
+    document.getElementById('prod-nombre').value = prod.nombre;
+    document.getElementById('prod-precio').value = prod.precio;
+    document.getElementById('prod-categoria').value = prod.categoria || prod.seccion || '';
+    document.getElementById('prod-subcategoria').value = prod.subcategoria || '';
+    document.getElementById('prod-imagen-url').value = prod.imagen || '';
+
+    document.getElementById('titulo-form').innerText = '✏️ Editar Producto';
+    document.getElementById('btn-guardar').innerText = 'Actualizar Producto';
+    document.getElementById('btn-cancelar').style.display = 'inline-block';
+}
+
+// 6. RESETEAR FORMULARIO
+function resetearFormulario() {
+    document.getElementById('form-producto').reset();
+    document.getElementById('prod-id').value = '';
+    document.getElementById('titulo-form').innerText = '➕ Agregar Nuevo Producto';
+    document.getElementById('btn-guardar').innerText = 'Guardar Producto';
+    document.getElementById('btn-cancelar').style.display = 'none';
+}
+
+// 7. ELIMINAR PRODUCTO
+function eliminarProducto(id) {
     if (!confirm('¿Estás seguro de que deseas eliminar este producto?')) return;
 
-    fetch(`${API_URL}/productos/${id}`, { method: 'DELETE' })
-        .then(res => res.json())
-        .then(() => {
-            alert('Producto eliminado.');
-            obtenerProductosAdmin();
-        })
-        .catch(err => console.error('Error al eliminar:', err));
+    fetch(`${API_URL}/productos/${id}`, {
+        method: 'DELETE'
+    })
+    .then(res => {
+        if (!res.ok) throw new Error('Error al eliminar');
+        alert('🗑️ Producto eliminado.');
+        cargarProductosAdmin();
+    })
+    .catch(err => {
+        console.error(err);
+        alert('❌ No se pudo eliminar el producto.');
+    });
+}
+
+// Función auxiliar para convertir archivo de imagen a string Base64
+function convertirBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+    });
 }
