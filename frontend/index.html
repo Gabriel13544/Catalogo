@@ -18,10 +18,16 @@
 <body>
 
     <header class="encabezado">
-        <img src="logo/logo.jpg" alt="Logo BikerShop" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin-bottom: 10px;">
+        <!-- Se le agregó ID y cursor de click al logo -->
+        <img src="logo/logo.jpg" id="logo-contacto" alt="Logo BikerShop" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin-bottom: 10px; cursor: pointer;">
         
         <h1>Nuestro Catálogo</h1>
         <p>Tienda BikerShop</p>
+
+        <!-- Indicador clickeable para abrir contacto -->
+        <p id="texto-contacto" style="cursor: pointer; color: #ff3333; font-weight: bold; margin-top: 8px; font-size: 14px;">
+            📍 Ver Dirección y WhatsApp (Toca aquí)
+        </p>
     </header>
 
     <div class="contenedor-principal">
@@ -54,6 +60,38 @@
             <button id="btn-comprar" class="btn-accion">Enviar Pedido</button>
         </aside>
 
+    </div>
+
+    <!-- VENTANA EMERGENTE (MODAL DE CONTACTO) -->
+    <div id="modal-contacto" class="modal-contacto-overlay">
+        <div class="modal-contacto-card">
+            <span class="btn-cerrar-modal" id="cerrar-modal">&times;</span>
+            
+            <h2>🚴‍♂️ BikerShop Contacto</h2>
+            <hr style="margin: 10px 0; border: 0; border-top: 1px solid #eee;">
+            
+            <div class="info-contacto-item">
+                <strong>📍 Dirección:</strong>
+                <p>Calle Principal #123, Ciudad, País</p>
+            </div>
+            
+            <div class="info-contacto-item">
+                <strong>📞 Teléfono:</strong>
+                <p>+58 412-0000000</p>
+            </div>
+
+            <div class="acciones-contacto">
+                <!-- Chat directo de WhatsApp -->
+                <a href="https://wa.me/584120000000?text=Hola,%20quisiera%20más%20información" target="_blank" class="btn-modal-wa">
+                    💬 Chat Directo de WhatsApp
+                </a>
+                
+                <!-- Canal de WhatsApp -->
+                <a href="https://whatsapp.com/channel/TU_CANAL_AQUI" target="_blank" class="btn-modal-canal">
+                    📢 Unirme al Canal de WhatsApp
+                </a>
+            </div>
+        </div>
     </div>
 
 </body>
