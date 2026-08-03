@@ -81,7 +81,7 @@ body {
 .tarjeta-producto {
     background: white;
     border-radius: 8px;
-    overflow: hidden; /* Evita que el zoom se salga de la tarjeta */
+    overflow: hidden;
     box-shadow: 0 6px 12px rgba(0,0,0,0.2);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     display: flex;
@@ -99,7 +99,7 @@ body {
 .tarjeta-producto img {
     width: 100%;
     max-width: 800px; 
-    aspect-ratio: 1 / 1; /* Mantiene proporción cuadrada */
+    aspect-ratio: 1 / 1;
     object-fit: cover;
     border-bottom: 1px solid #eee;
     cursor: zoom-in;
@@ -107,7 +107,7 @@ body {
 }
 
 .tarjeta-producto img:active {
-    transform: scale(1.3); /* Agranda la imagen un 30% al presionar */
+    transform: scale(1.3);
     cursor: zoom-out;
 }
 
@@ -257,7 +257,6 @@ body {
     background-color: white;
 }
 
-/* Corrección del contenedor de selección de imagen */
 .formulario-admin input[type="file"] {
     width: 100%;
     max-width: 100%;
@@ -267,7 +266,6 @@ body {
     padding: 0;
 }
 
-/* Botón estilizado para la carga de imágenes */
 input[type="file"]::file-selector-button {
     background-color: #212529;
     color: #ffffff;
@@ -287,7 +285,6 @@ input[type="file"]::file-selector-button:hover {
     background-color: #343a40;
 }
 
-/* Lista de administración de productos y secciones */
 .lista-admin > div,
 .item-admin-producto {
     display: flex;
@@ -308,7 +305,6 @@ input[type="file"]::file-selector-button:hover {
     background-color: #f1f1f1;
 }
 
-/* Botones dentro del panel de administración */
 .btn-editar {
     background-color: #ffc107;
     color: #000;
@@ -342,10 +338,10 @@ input[type="file"]::file-selector-button:hover {
 }
 
 /* ==========================================
-   MODAL DE CONTACTO (VENTANA EMERGENTE)
+   MODALES (CONTACTO Y ENTREGA)
    ========================================== */
 .modal-contacto-overlay {
-    display: none; /* Oculto por defecto */
+    display: none;
     position: fixed;
     top: 0;
     left: 0;
@@ -429,6 +425,31 @@ input[type="file"]::file-selector-button:hover {
     transform: translateY(-2px);
 }
 
+/* OPCIONES DE ENTREGA */
+.opciones-entrega {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 15px;
+}
+
+.btn-opcion-entrega {
+    background-color: #212529;
+    color: #ffffff;
+    border: none;
+    padding: 14px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.btn-opcion-entrega:hover {
+    background-color: #e50914;
+    transform: translateY(-2px);
+}
+
 /* ==========================================
    ANIMACIONES (@keyframes)
    ========================================== */
@@ -455,7 +476,6 @@ input[type="file"]::file-selector-button:hover {
    RESPONSIVIDAD (@media queries)
    ========================================== */
 
-/* 1. Monitores muy grandes (Más de 1200px) */
 @media (min-width: 1201px) {
     .contenedor-principal {
         max-width: 1400px;
@@ -465,7 +485,6 @@ input[type="file"]::file-selector-button:hover {
     }
 }
 
-/* 2. Laptops y Tablets (Hasta 1024px) */
 @media (max-width: 1024px) {
     .contenedor-principal {
         flex-direction: column;
@@ -477,7 +496,6 @@ input[type="file"]::file-selector-button:hover {
     }
 }
 
-/* 3. Teléfonos Móviles Grandes (Hasta 480px) */
 @media (max-width: 480px) {
     .encabezado h1 {
         font-size: 24px;
@@ -489,7 +507,6 @@ input[type="file"]::file-selector-button:hover {
     .grid-productos {
         grid-template-columns: 1fr;
     }
-    /* El botón de imagen se mantiene contenido dentro de los márgenes */
     input[type="file"]::file-selector-button {
         display: inline-block;
         width: auto;
@@ -497,7 +514,6 @@ input[type="file"]::file-selector-button:hover {
     }
 }
 
-/* 4. Teléfonos Móviles Estándar (Hasta 360px) */
 @media (max-width: 360px) {
     .encabezado h1 {
         font-size: 20px;
@@ -517,7 +533,6 @@ input[type="file"]::file-selector-button:hover {
     }
 }
 
-/* 5. Pantallas Ultra Pequeñas (Hasta 240px) */
 @media (max-width: 240px) {
     .contenedor-principal {
         padding: 0 10px;
@@ -540,4 +555,4 @@ input[type="file"]::file-selector-button:hover {
         margin-left: 0;
         margin-top: 10px;
     }
-       }
+   }
