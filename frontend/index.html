@@ -31,11 +31,20 @@
     <div class="contenedor-principal">
         
         <main class="seccion-productos">
+            <!-- BARRA DE FILTROS Y BUSCADOR -->
             <div class="barra-filtros">
-                <label for="filtro-seccion"><strong>Mostrar Categoría:</strong></label>
-                <select id="filtro-seccion" onchange="filtrarProductosPorSeccion()">
-                    <option value="TODOS" selected>Todos los productos</option>
-                </select>
+                <div class="filtro-grupo">
+                    <label for="filtro-seccion"><strong>Categoría:</strong></label>
+                    <select id="filtro-seccion">
+                        <option value="TODOS" selected>Todos los productos</option>
+                    </select>
+                </div>
+
+                <!-- BUSCADOR CON LUPA -->
+                <div class="buscador-grupo">
+                    <span class="icono-lupa">🔍</span>
+                    <input type="text" id="input-buscador" placeholder="Buscar producto...">
+                </div>
             </div>
 
             <div id="contenedor-productos" class="grid-productos">
@@ -110,4 +119,4 @@
     </div>
 
 </body>
-</html>  
+</html>
