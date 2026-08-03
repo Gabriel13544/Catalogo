@@ -9,9 +9,10 @@ document.addEventListener('DOMContentLoaded', () => {
     obtenerProductos();
     cargarSeccionesCliente();
     configurarFiltro();
-    configurarModalContacto(); // <-- NUEVO: Inicializa los eventos para la ventana de contacto
+    configurarModalContacto();
+    configurarModalEntrega();
 
-    // Enlazamos el botón de enviar pedido por WhatsApp
+    // Enlazamos el botón de enviar pedido
     const btnComprar = document.getElementById('btn-comprar');
     if (btnComprar) {
         btnComprar.addEventListener('click', enviarPedidoWhatsApp);
@@ -49,7 +50,6 @@ function renderizarProductos(productos) {
         const imagenHTML = (prod.imagen && prod.imagen.trim() !== '') 
             ? `<img src="${prod.imagen}" alt="${prod.nombre}">` : ''; 
 
-        // Evita que nombres con comillas rompan la función de JS
         const nombreSeguro = prod.nombre.replace(/'/g, "\\'");
 
         tarjeta.innerHTML = `
@@ -68,7 +68,7 @@ function renderizarProductos(productos) {
 }
 
 // ==========================================
-// 📞 GESTIÓN DEL MODAL DE CONTACTO (NUEVO)
+// 📞 GESTIÓN DEL MODAL DE CONTACTO
 // ==========================================
 function configurarModalContacto() {
     const modalContacto = document.getElementById('modal-contacto');
@@ -84,17 +84,33 @@ function configurarModalContacto() {
         if (modalContacto) modalContacto.style.display = 'none';
     };
 
-    // Abrir al hacer clic en el logo o en el texto del encabezado
     if (btnLogo) btnLogo.addEventListener('click', abrirModal);
     if (btnTexto) btnTexto.addEventListener('click', abrirModal);
-
-    // Cerrar al hacer clic en el botón de la equis "X"
     if (btnCerrar) btnCerrar.addEventListener('click', cerrarModal);
 
-    // Cerrar al hacer clic fuera del recuadro blanco
     window.addEventListener('click', (e) => {
         if (e.target === modalContacto) {
             cerrarModal();
+        }
+    });
+}
+
+// ==========================================
+// 🛵 GESTIÓN DEL MODAL DE ENTREGA
+// ==========================================
+function configurarModalEntrega() {
+    const modalEntrega = document.getElementById('modal-entrega');
+    const btnCerrarEntrega = document.getElementById('cerrar-modal-entrega');
+
+    if (btnCerrarEntrega) {
+        btnCerrarEntrega.addEventListener('click', () => {
+            if (modalEntrega) modalEntrega.style.display = 'none';
+        });
+    }
+
+    window.addEventListener('click', (e) => {
+        if (e.target === modalEntrega) {
+            modalEntrega.style.display = 'none';
         }
     });
 }
@@ -109,7 +125,6 @@ function cargarSeccionesCliente() {
             const selectFiltro = document.getElementById('filtro-seccion');
             if (!selectFiltro) return;
 
-            // Opción por defecto requerida
             selectFiltro.innerHTML = '<option value="TODOS" selected>Todos los productos</option>';
 
             secciones.forEach(sec => {
@@ -133,7 +148,7 @@ function configurarFiltro() {
     }
 }
 
-// 3. CARRITO Y ENVÍO POR WHATSAPP
+// 3. CARRITO Y ENVÍO POR WHATSAPP CON SELECCIÓN DE ENTREGA
 function agregarAlCarrito(id, nombre, precio) {
     const existente = carrito.find(item => item.id === id);
     if (existente) {
@@ -184,6 +199,22 @@ function enviarPedidoWhatsApp() {
         return;
     }
 
+    // Abre el modal para que el cliente elija el método de entrega
+    const modalEntrega = document.getElementById('modal-entrega');
+    if (modalEntrega) {
+        modalEntrega.style.display = 'flex';
+    }
+}
+
+function confirmarEntrega(metodoSeleccionado) {
+    // 1. Mostrar la alerta requerida
+    alert(`Usted seleccionó el servicio de: ${metodoSeleccionado}`);
+
+    // 2. Ocultar el modal de entrega
+    const modalEntrega = document.getElementById('modal-entrega');
+    if (modalEntrega) modalEntrega.style.display = 'none';
+
+    // 3. Crear el mensaje personalizado para WhatsApp
     let mensaje = "Hola, quiero realizar el siguiente pedido:%0A%0A";
     let total = 0;
 
@@ -193,9 +224,11 @@ function enviarPedidoWhatsApp() {
     });
 
     mensaje += `%0A*Total: $${total.toFixed(2)}*`;
+    mensaje += `%0A*Método de entrega:* ${metodoSeleccionado}`;
 
     const numeroTelefono = "5358875588"; 
     const urlWhatsApp = `https://wa.me/${numeroTelefono}?text=${mensaje}`;
 
+    // 4. Abrir la ventana de conversación
     window.open(urlWhatsApp, '_blank');
 }
