@@ -7,17 +7,18 @@ let carrito = [];
 
 document.addEventListener('DOMContentLoaded', () => {
     obtenerProductos();
-    cargarSeccionesCliente(); // <-- NUEVO: Carga las secciones desde la base de datos
+    cargarSeccionesCliente();
     configurarFiltro();
+    configurarModalContacto(); // <-- NUEVO: Inicializa los eventos para la ventana de contacto
 
-    // 1️⃣ Enlazamos el botón de WhatsApp
+    // Enlazamos el botón de enviar pedido por WhatsApp
     const btnComprar = document.getElementById('btn-comprar');
     if (btnComprar) {
         btnComprar.addEventListener('click', enviarPedidoWhatsApp);
     }
 });
 
-// 1. CARGA Y RENDERIZADO
+// 1. CARGA Y RENDERIZADO DE PRODUCTOS
 function obtenerProductos() {
     const contenedor = document.getElementById('contenedor-productos');
     
@@ -48,7 +49,7 @@ function renderizarProductos(productos) {
         const imagenHTML = (prod.imagen && prod.imagen.trim() !== '') 
             ? `<img src="${prod.imagen}" alt="${prod.nombre}">` : ''; 
 
-        // Evita que nombres con comillas rompan la función
+        // Evita que nombres con comillas rompan la función de JS
         const nombreSeguro = prod.nombre.replace(/'/g, "\\'");
 
         tarjeta.innerHTML = `
@@ -67,7 +68,39 @@ function renderizarProductos(productos) {
 }
 
 // ==========================================
-// 📂 GESTIÓN DINÁMICA DE SECCIONES (NUEVO)
+// 📞 GESTIÓN DEL MODAL DE CONTACTO (NUEVO)
+// ==========================================
+function configurarModalContacto() {
+    const modalContacto = document.getElementById('modal-contacto');
+    const btnLogo = document.getElementById('logo-contacto');
+    const btnTexto = document.getElementById('texto-contacto');
+    const btnCerrar = document.getElementById('cerrar-modal');
+
+    const abrirModal = () => {
+        if (modalContacto) modalContacto.style.display = 'flex';
+    };
+
+    const cerrarModal = () => {
+        if (modalContacto) modalContacto.style.display = 'none';
+    };
+
+    // Abrir al hacer clic en el logo o en el texto del encabezado
+    if (btnLogo) btnLogo.addEventListener('click', abrirModal);
+    if (btnTexto) btnTexto.addEventListener('click', abrirModal);
+
+    // Cerrar al hacer clic en el botón de la equis "X"
+    if (btnCerrar) btnCerrar.addEventListener('click', cerrarModal);
+
+    // Cerrar al hacer clic fuera del recuadro blanco
+    window.addEventListener('click', (e) => {
+        if (e.target === modalContacto) {
+            cerrarModal();
+        }
+    });
+}
+
+// ==========================================
+// 📂 GESTIÓN DINÁMICA DE SECCIONES
 // ==========================================
 function cargarSeccionesCliente() {
     fetch(`${API_URL}/secciones`)
@@ -89,7 +122,7 @@ function cargarSeccionesCliente() {
         .catch(err => console.error('Error al cargar secciones en la tienda:', err));
 }
 
-// 2. FILTRADO
+// 2. FILTRADO DE PRODUCTOS
 function configurarFiltro() {
     const selectFiltro = document.getElementById('filtro-seccion');
     if (selectFiltro) {
