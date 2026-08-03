@@ -18,13 +18,11 @@
 <body>
 
     <header class="encabezado">
-        <!-- Se le agregó ID y cursor de click al logo -->
         <img src="logo/logo.jpg" id="logo-contacto" alt="Logo BikerShop" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin-bottom: 10px; cursor: pointer;">
         
         <h1>Nuestro Catálogo</h1>
         <p>Tienda BikerShop</p>
 
-        <!-- Indicador clickeable para abrir contacto -->
         <p id="texto-contacto" style="cursor: pointer; color: #ff3333; font-weight: bold; margin-top: 8px; font-size: 14px;">
             📍 Ver Dirección y WhatsApp (Toca aquí)
         </p>
@@ -35,10 +33,8 @@
         <main class="seccion-productos">
             <div class="barra-filtros">
                 <label for="filtro-seccion"><strong>Mostrar Categoría:</strong></label>
-                <!-- Menú desplegable modificado para recibir las secciones dinámicamente -->
                 <select id="filtro-seccion" onchange="filtrarProductosPorSeccion()">
                     <option value="TODOS" selected>Todos los productos</option>
-                    <!-- Las secciones creadas en el panel de administrador aparecerán aquí automáticamente -->
                 </select>
             </div>
 
@@ -81,12 +77,10 @@
             </div>
 
             <div class="acciones-contacto">
-                <!-- Chat directo de WhatsApp -->
                 <a href="https://wa.me/584120000000?text=Hola,%20quisiera%20más%20información" target="_blank" class="btn-modal-wa">
                     💬 Chat Directo de WhatsApp
                 </a>
                 
-                <!-- Canal de WhatsApp -->
                 <a href="https://whatsapp.com/channel/TU_CANAL_AQUI" target="_blank" class="btn-modal-canal">
                     📢 Unirme al Canal de WhatsApp
                 </a>
@@ -94,5 +88,26 @@
         </div>
     </div>
 
+    <!-- VENTANA EMERGENTE (SELECCIÓN DE MÉTODO DE ENTREGA) -->
+    <div id="modal-entrega" class="modal-contacto-overlay">
+        <div class="modal-contacto-card" style="text-align: center;">
+            <span class="btn-cerrar-modal" id="cerrar-modal-entrega">&times;</span>
+            
+            <h2>🛵 Método de Entrega</h2>
+            <p style="margin: 12px 0; color: #666; font-size: 14px;">
+                ¿Cómo deseas recibir tu pedido? Selecciona una opción para continuar:
+            </p>
+            
+            <div class="opciones-entrega">
+                <button class="btn-opcion-entrega" onclick="confirmarEntrega('Servicio de mensajería')">
+                    🛵 Servicio de mensajería
+                </button>
+                <button class="btn-opcion-entrega" onclick="confirmarEntrega('Recogida en tienda')">
+                    🏪 Recogida en tienda
+                </button>
+            </div>
+        </div>
+    </div>
+
 </body>
-</html>
+</html>  
