@@ -7,7 +7,6 @@ let carrito = [];
 
 document.addEventListener('DOMContentLoaded', () => {
     obtenerProductos();
-    cargarSeccionesCliente();
     configurarFiltro();
     configurarModalContacto();
     configurarModalEntrega();
@@ -19,7 +18,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+// ==========================================
 // 1. CARGA Y RENDERIZADO DE PRODUCTOS
+// ==========================================
 function obtenerProductos() {
     const contenedor = document.getElementById('contenedor-productos');
     
@@ -27,6 +28,11 @@ function obtenerProductos() {
         .then(res => res.json())
         .then(productos => {
             productosGlobales = productos;
+
+            // Genera la lista desplegable de categorías según lo que guardó el admin
+            actualizarMenuCategorias(productosGlobales);
+
+            // Muestra los productos en pantalla
             renderizarProductos(productosGlobales);
         })
         .catch(err => {
@@ -35,28 +41,56 @@ function obtenerProductos() {
         });
 }
 
+// Genera automáticamente las opciones del select a partir de las categorías reales del inventario
+function actualizarMenuCategorias(productos) {
+    const selectFiltro = document.getElementById('filtro-seccion');
+    if (!selectFiltro) return;
+
+    // Extrae categorías únicas eliminando vacías o duplicadas
+    const categorias = [...new Set(
+        productos
+            .map(p => p.categoria || p.seccion)
+            .filter(cat => cat && cat.trim() !== '')
+    )];
+
+    selectFiltro.innerHTML = '<option value="TODOS" selected>Todos los productos</option>';
+
+    categorias.forEach(cat => {
+        const opcion = document.createElement('option');
+        opcion.value = cat;
+        opcion.textContent = cat;
+        selectFiltro.appendChild(opcion);
+    });
+}
+
 function renderizarProductos(productos) {
     const contenedor = document.getElementById('contenedor-productos');
     contenedor.innerHTML = '';
 
     if (productos.length === 0) {
-        contenedor.innerHTML = '<p>No se encontraron productos.</p>';
+        contenedor.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #777; padding: 20px;">No se encontraron productos con esa búsqueda.</p>';
         return;
     }
 
     productos.forEach(prod => {
         const tarjeta = document.createElement('div');
         tarjeta.className = 'tarjeta-producto';
+        
         const imagenHTML = (prod.imagen && prod.imagen.trim() !== '') 
             ? `<img src="${prod.imagen}" alt="${prod.nombre}">` : ''; 
 
         const nombreSeguro = prod.nombre.replace(/'/g, "\\'");
+        const categoriaTexto = prod.categoria || prod.seccion || 'General';
+        const subcategoriaHTML = prod.subcategoria 
+            ? `<p style="font-size: 13px; color: #666; margin-top: 2px;">🏷️ Subcategoría: <b>${prod.subcategoria}</b></p>` 
+            : '';
 
         tarjeta.innerHTML = `
             ${imagenHTML}
             <div class="contenido-tarjeta">
                 <h3>${prod.nombre}</h3>
-                <p>Sección: ${prod.seccion || 'Sin sección'}</p>
+                <span class="etiqueta-seccion">📂 ${categoriaTexto}</span>
+                ${subcategoriaHTML}
                 <div class="precio">$${parseFloat(prod.precio).toFixed(2)}</div>
                 <button class="btn-accion" onclick="agregarAlCarrito('${prod.id}', '${nombreSeguro}', ${prod.precio})">
                     Comprar
@@ -68,7 +102,49 @@ function renderizarProductos(productos) {
 }
 
 // ==========================================
-// 📞 GESTIÓN DEL MODAL DE CONTACTO
+// 🔍 2. FILTRADO COMBINADO (CATEGORÍA + BUSCADOR)
+// ==========================================
+function aplicarFiltros() {
+    const selectFiltro = document.getElementById('filtro-seccion');
+    const inputBuscador = document.getElementById('input-buscador');
+
+    const categoriaSeleccionada = selectFiltro ? selectFiltro.value : 'TODOS';
+    const busqueda = inputBuscador ? inputBuscador.value.toLowerCase().trim() : '';
+
+    const productosFiltrados = productosGlobales.filter(prod => {
+        const catProducto = prod.categoria || prod.seccion || '';
+        const subcatProducto = prod.subcategoria || '';
+
+        // Comprueba si coincide la categoría seleccionada
+        const coincideCategoria = (categoriaSeleccionada === 'TODOS' || catProducto === categoriaSeleccionada);
+        
+        // Comprueba si el texto buscado coincide con Nombre, Categoría o Subcategoría
+        const coincideTexto = prod.nombre.toLowerCase().includes(busqueda) ||
+                              catProducto.toLowerCase().includes(busqueda) ||
+                              subcatProducto.toLowerCase().includes(busqueda);
+
+        return coincideCategoria && coincideTexto;
+    });
+
+    renderizarProductos(productosFiltrados);
+}
+
+function configurarFiltro() {
+    const selectFiltro = document.getElementById('filtro-seccion');
+    const inputBuscador = document.getElementById('input-buscador');
+
+    if (selectFiltro) {
+        selectFiltro.addEventListener('change', aplicarFiltros);
+    }
+
+    if (inputBuscador) {
+        // Filtra en tiempo real conforme el usuario escribe
+        inputBuscador.addEventListener('input', aplicarFiltros);
+    }
+}
+
+// ==========================================
+// 📞 3. GESTIÓN DEL MODAL DE CONTACTO
 // ==========================================
 function configurarModalContacto() {
     const modalContacto = document.getElementById('modal-contacto');
@@ -96,7 +172,7 @@ function configurarModalContacto() {
 }
 
 // ==========================================
-// 🛵 GESTIÓN DEL MODAL DE ENTREGA
+// 🛵 4. GESTIÓN DEL MODAL DE ENTREGA
 // ==========================================
 function configurarModalEntrega() {
     const modalEntrega = document.getElementById('modal-entrega');
@@ -116,39 +192,8 @@ function configurarModalEntrega() {
 }
 
 // ==========================================
-// 📂 GESTIÓN DINÁMICA DE SECCIONES
+// 🛒 5. CARRITO Y ENVÍO POR WHATSAPP
 // ==========================================
-function cargarSeccionesCliente() {
-    fetch(`${API_URL}/secciones`)
-        .then(res => res.json())
-        .then(secciones => {
-            const selectFiltro = document.getElementById('filtro-seccion');
-            if (!selectFiltro) return;
-
-            selectFiltro.innerHTML = '<option value="TODOS" selected>Todos los productos</option>';
-
-            secciones.forEach(sec => {
-                const opcion = document.createElement('option');
-                opcion.value = sec.nombre;
-                opcion.textContent = sec.nombre;
-                selectFiltro.appendChild(opcion);
-            });
-        })
-        .catch(err => console.error('Error al cargar secciones en la tienda:', err));
-}
-
-// 2. FILTRADO DE PRODUCTOS
-function configurarFiltro() {
-    const selectFiltro = document.getElementById('filtro-seccion');
-    if (selectFiltro) {
-        selectFiltro.addEventListener('change', (e) => {
-            const val = e.target.value;
-            renderizarProductos(val === 'TODOS' ? productosGlobales : productosGlobales.filter(p => p.seccion === val));
-        });
-    }
-}
-
-// 3. CARRITO Y ENVÍO POR WHATSAPP CON SELECCIÓN DE ENTREGA
 function agregarAlCarrito(id, nombre, precio) {
     const existente = carrito.find(item => item.id === id);
     if (existente) {
@@ -199,7 +244,6 @@ function enviarPedidoWhatsApp() {
         return;
     }
 
-    // Abre el modal para que el cliente elija el método de entrega
     const modalEntrega = document.getElementById('modal-entrega');
     if (modalEntrega) {
         modalEntrega.style.display = 'flex';
@@ -207,14 +251,11 @@ function enviarPedidoWhatsApp() {
 }
 
 function confirmarEntrega(metodoSeleccionado) {
-    // 1. Mostrar la alerta requerida
     alert(`Usted seleccionó el servicio de: ${metodoSeleccionado}`);
 
-    // 2. Ocultar el modal de entrega
     const modalEntrega = document.getElementById('modal-entrega');
     if (modalEntrega) modalEntrega.style.display = 'none';
 
-    // 3. Crear el mensaje personalizado para WhatsApp
     let mensaje = "Hola, quiero realizar el siguiente pedido:%0A%0A";
     let total = 0;
 
@@ -229,6 +270,5 @@ function confirmarEntrega(metodoSeleccionado) {
     const numeroTelefono = "5358875588"; 
     const urlWhatsApp = `https://wa.me/${numeroTelefono}?text=${mensaje}`;
 
-    // 4. Abrir la ventana de conversación
     window.open(urlWhatsApp, '_blank');
 }
