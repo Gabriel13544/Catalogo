@@ -37,6 +37,36 @@ body {
 }
 
 /* ==========================================
+   BANNER DE BIENVENIDA
+   ========================================== */
+.banner-bienvenida {
+    background: #ffffff;
+    max-width: 1200px;
+    margin: 20px auto 0 auto;
+    padding: 20px 25px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+    border-left: 6px solid #e50914;
+}
+
+.banner-bienvenida h2 {
+    font-size: 1.2rem;
+    color: #111111;
+    margin-bottom: 10px;
+    font-weight: 800;
+    line-height: 1.3;
+}
+
+.banner-bienvenida p {
+    font-size: 0.95rem;
+    color: #444444;
+    line-height: 1.5;
+    max-width: 850px;
+    margin: 0 auto;
+}
+
+/* ==========================================
    DISEÑO PRINCIPAL (PRODUCTOS + CARRITO)
    ========================================== */
 .contenedor-principal {
@@ -533,7 +563,11 @@ input[type="file"]::file-selector-button:hover {
     margin-top: 18px;
 }
 
-.btn-modal-wa, .btn-modal-canal {
+/* ESTILOS PROPIOS PARA CADA RED SOCIAL */
+.btn-modal-wa, 
+.btn-modal-ig, 
+.btn-modal-fb, 
+.btn-modal-canal {
     display: block;
     text-align: center;
     padding: 12px;
@@ -549,12 +583,25 @@ input[type="file"]::file-selector-button:hover {
     color: white;
 }
 
+.btn-modal-ig {
+    background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+    color: white;
+}
+
+.btn-modal-fb {
+    background-color: #1877F2;
+    color: white;
+}
+
 .btn-modal-canal {
     background-color: #128C7E;
     color: white;
 }
 
-.btn-modal-wa:hover, .btn-modal-canal:hover {
+.btn-modal-wa:hover, 
+.btn-modal-ig:hover, 
+.btn-modal-fb:hover, 
+.btn-modal-canal:hover {
     opacity: 0.9;
     transform: translateY(-2px);
 }
@@ -629,6 +676,19 @@ input[type="file"]::file-selector-button:hover {
         min-width: 100%;
         position: relative;
         top: 0;
+    }
+}
+
+@media (max-width: 768px) {
+    .banner-bienvenida {
+        margin: 15px 15px 0 15px;
+        padding: 16px 18px;
+    }
+    .banner-bienvenida h2 {
+        font-size: 1.05rem;
+    }
+    .banner-bienvenida p {
+        font-size: 0.88rem;
     }
 }
 
