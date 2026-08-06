@@ -1,8 +1,13 @@
 const API_URL = 'https://tienda-bikershop.onrender.com';
 
+const CLAVE_CORRECTA = 'biker2026'; 
+
 let listaProductos = [];
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Validar contraseña antes de cargar el inventario
+    if (!validarAccesoAdmin()) return;
+
     cargarProductosAdmin();
 
     const form = document.getElementById('form-producto');
@@ -10,6 +15,26 @@ document.addEventListener('DOMContentLoaded', () => {
         form.addEventListener('submit', guardarProducto);
     }
 });
+
+// 0. VERIFICACIÓN DE CONTRASEÑA
+function validarAccesoAdmin() {
+    const autenticado = sessionStorage.getItem('adminAutenticado');
+
+    if (autenticado === 'true') {
+        return true;
+    }
+
+    const pass = prompt("🔒 Acceso Restringido\nIngresa la contraseña de administrador:");
+
+    if (pass === CLAVE_CORRECTA) {
+        sessionStorage.setItem('adminAutenticado', 'true');
+        return true;
+    } else {
+        alert("❌ Contraseña incorrecta.");
+        window.location.href = "index.html"; // Redirige a la tienda principal
+        return false;
+    }
+}
 
 // 1. CARGAR INVENTARIO DE PRODUCTOS
 function cargarProductosAdmin() {
@@ -23,13 +48,17 @@ function cargarProductosAdmin() {
         })
         .catch(err => {
             console.error('Error al obtener inventario:', err);
-            contenedor.innerHTML = '<p style="color:red;">Error al conectar con el servidor.</p>';
+            if (contenedor) {
+                contenedor.innerHTML = '<p style="color:red;">Error al conectar con el servidor.</p>';
+            }
         });
 }
 
 // 2. RENDERIZAR LISTA CON CATEGORÍA Y SUBCATEGORÍA
 function renderizarInventario(productos) {
     const contenedor = document.getElementById('lista-admin-productos');
+    if (!contenedor) return;
+    
     contenedor.innerHTML = '';
 
     if (productos.length === 0) {
