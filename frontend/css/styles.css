@@ -1,7 +1,3 @@
-/* ==========================================
-   CONFIGURACIÓN GENERAL Y FONDO GRADIENT
-   ========================================== */
-
 *,
 *::before,
 *::after {
@@ -12,28 +8,81 @@
 }
 
 body {
-    background: linear-gradient(to bottom, #e50914, #000000);
-    background-attachment: fixed; 
+    /* Fondo principal: Imagen vertical 2.webp */
+    background-image: url('../Fondo/2.webp');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
     min-height: 100vh;
     color: #333;
     overflow-x: hidden;
+    /* Espacio superior para que la cabecera fija no tape el contenido inicial */
+    padding-top: 110px; 
 }
 
 /* ==========================================
-   ENCABEZADO (Combinado con el fondo)
+   ENCABEZADO FIJO (Fondo 1.webp)
    ========================================== */
 .encabezado {
-    background-color: rgba(0, 0, 0, 0.4);
-    backdrop-filter: blur(5px); 
-    color: white;
-    padding: 20px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    
+    /* Imagen horizontal 1.webp como fondo de la barra superior */
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('../Fondo/1.webp');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    
+    padding: 12px 20px;
     text-align: center;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    color: white;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+}
+
+.encabezado h1 {
+    font-size: 1.3rem;
+    margin-bottom: 2px;
 }
 
 .encabezado p {
     color: #ccc;
-    margin-top: 5px;
+    font-size: 0.9rem;
+}
+
+.texto-contacto-btn {
+    cursor: pointer;
+    color: #ff3333;
+    font-weight: bold;
+    margin-top: 4px;
+    font-size: 14px;
+}
+
+/* ==========================================
+   LOGO REDONDO DESPLAZABLE (SCROLL)
+   ========================================== */
+.contenedor-logo {
+    text-align: center;
+    margin: 15px 0 5px 0;
+    position: relative;
+    z-index: 10;
+}
+
+.logo-redondo {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    object-fit: cover;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    transition: transform 0.2s ease;
+}
+
+.logo-redondo:hover {
+    transform: scale(1.05);
 }
 
 /* ==========================================
@@ -42,7 +91,7 @@ body {
 .banner-bienvenida {
     background: #ffffff;
     max-width: 1200px;
-    margin: 20px auto 0 auto;
+    margin: 15px auto 0 auto;
     padding: 20px 25px;
     border-radius: 10px;
     text-align: center;
@@ -173,9 +222,7 @@ body {
     box-shadow: 0 10px 20px rgba(0,0,0,0.4);
 }
 
-/* ==========================================
-   CONFIGURACIÓN DE IMÁGENES (ZOOM INTEGRADO)
-   ========================================== */
+/* CONFIGURACIÓN DE IMÁGENES */
 .tarjeta-producto img {
     width: 100%;
     max-width: 800px; 
@@ -238,7 +285,7 @@ body {
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     height: fit-content;
     position: sticky;
-    top: 20px;
+    top: 120px;
 }
 
 .seccion-carrito h3 {
@@ -563,7 +610,7 @@ input[type="file"]::file-selector-button:hover {
     margin-top: 18px;
 }
 
-/* ESTILOS PROPIOS PARA CADA RED SOCIAL */
+/* REDES SOCIALES */
 .btn-modal-wa, 
 .btn-modal-ig, 
 .btn-modal-fb, 
@@ -638,18 +685,8 @@ input[type="file"]::file-selector-button:hover {
     100% { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes brillar {
-    0% { box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
-    50% { box-shadow: 0 4px 15px rgba(229, 9, 20, 0.5); }
-    100% { box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
-}
-
 .tarjeta-producto, .seccion-carrito, .formulario-admin {
     animation: aparecerSuave 0.6s ease-out forwards;
-}
-
-.encabezado {
-    animation: brillar 3s infinite;
 }
 
 /* ==========================================
@@ -693,6 +730,9 @@ input[type="file"]::file-selector-button:hover {
 }
 
 @media (max-width: 480px) {
+    body {
+        padding-top: 115px;
+    }
     #titulo-form {
         font-size: 1.05rem;
     }
@@ -700,11 +740,11 @@ input[type="file"]::file-selector-button:hover {
         padding: 0 12px;
     }
     .encabezado h1 {
-        font-size: 24px;
+        font-size: 1.1rem;
     }
-    .encabezado img {
-        width: 60px;
-        height: 60px;
+    .logo-redondo {
+        width: 75px;
+        height: 75px;
     }
     .grid-productos {
         grid-template-columns: 1fr;
@@ -726,7 +766,7 @@ input[type="file"]::file-selector-button:hover {
 
 @media (max-width: 360px) {
     .encabezado h1 {
-        font-size: 20px;
+        font-size: 1rem;
     }
     .contenido-tarjeta {
         padding: 10px;
@@ -740,29 +780,5 @@ input[type="file"]::file-selector-button:hover {
     .btn-accion {
         padding: 8px;
         font-size: 14px;
-    }
-}
-
-@media (max-width: 240px) {
-    .contenedor-principal {
-        padding: 0 8px;
-    }
-    .encabezado img {
-        width: 45px;
-        height: 45px;
-    }
-    .encabezado h1 {
-        font-size: 16px;
-    }
-    .encabezado p {
-        font-size: 12px;
-    }
-    .barra-filtros {
-        padding: 10px;
-    }
-    .barra-filtros select {
-        width: 100%;
-        margin-left: 0;
-        margin-top: 10px;
     }
    }
