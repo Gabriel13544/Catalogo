@@ -43,7 +43,7 @@ body::before {
     z-index: 1000;
     
     /* Fondo semi-transparente en lugar de 1.webp */
-    background: rgba(0, 0, 0, 0.8);
+    background: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     
