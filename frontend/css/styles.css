@@ -16,7 +16,7 @@ body {
     padding-top: 125px; 
 }
 
-/* CAPA DE FONDO FIJA CON DESENFOQUE (Compatibilidad total en móviles y PC) */
+/* CAPA DE FONDO FIJA (Única imagen para toda la página) */
 body::before {
     content: "";
     position: fixed;
@@ -28,14 +28,12 @@ body::before {
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    filter: blur(8px); /* Desenfoque aplicado a la imagen de fondo */
-    transform: scale(1.05); /* Escala ligera para ocultar los bordes difuminados */
     z-index: -1; /* Mantiene la imagen detrás de todo el contenido */
     pointer-events: none; /* Evita interferencias con los clics */
 }
 
 /* ==========================================
-   ENCABEZADO FIJO (Fondo 1.webp)
+   ENCABEZADO FIJO (Integrado con el fondo global)
    ========================================== */
 .encabezado {
     position: fixed;
@@ -44,11 +42,10 @@ body::before {
     width: 100%;
     z-index: 1000;
     
-    /* Imagen horizontal 1.webp como fondo de la barra superior */
-    background-image: linear-gradient(rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.55)), url('../Fondo/1.webp');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
+    /* Fondo semi-transparente en lugar de 1.webp */
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     
     padding: 12px 20px 14px 20px;
     text-align: center;
