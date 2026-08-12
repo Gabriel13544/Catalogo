@@ -16,7 +16,7 @@ body {
     padding-top: 125px; 
 }
 
-/* CAPA DE FONDO FIJA (Compatibilidad total en móviles y PC) */
+/* CAPA DE FONDO FIJA CON DESENFOQUE (Compatibilidad total en móviles y PC) */
 body::before {
     content: "";
     position: fixed;
@@ -28,6 +28,8 @@ body::before {
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+    filter: blur(8px); /* Desenfoque aplicado a la imagen de fondo */
+    transform: scale(1.05); /* Escala ligera para ocultar los bordes difuminados */
     z-index: -1; /* Mantiene la imagen detrás de todo el contenido */
     pointer-events: none; /* Evita interferencias con los clics */
 }
@@ -811,4 +813,4 @@ input[type="file"]::file-selector-button:hover {
         padding: 8px;
         font-size: 14px;
     }
-    }  
+    }
