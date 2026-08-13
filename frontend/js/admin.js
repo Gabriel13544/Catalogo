@@ -1,5 +1,5 @@
 const API_URL = 'https://tienda-bikershop.onrender.com';
-
+// 🔑 CONTRASEÑA DE ADMINISTRADOR:
 const CLAVE_CORRECTA = 'biker2026'; 
 
 let listaProductos = [];
@@ -45,6 +45,7 @@ function cargarProductosAdmin() {
         .then(productos => {
             listaProductos = productos;
             renderizarInventario(listaProductos);
+            actualizarSelectsFiltros(); // Carga las opciones únicas en los menús desplegables
         })
         .catch(err => {
             console.error('Error al obtener inventario:', err);
@@ -52,6 +53,57 @@ function cargarProductosAdmin() {
                 contenedor.innerHTML = '<p style="color:red;">Error al conectar con el servidor.</p>';
             }
         });
+}
+
+// NUEVA FUNCIÓN: ACTUALIZAR MENÚS DESPLEGABLES DE CATEGORÍAS Y SUBCATEGORÍAS
+function actualizarSelectsFiltros() {
+    const selectCat = document.getElementById('select-categoria');
+    const selectSub = document.getElementById('select-subcategoria');
+
+    // 1. Extraer categorías únicas existentes
+    if (selectCat) {
+        const categoriasUnicas = [...new Set(
+            listaProductos
+                .map(p => (p.categoria || p.seccion || '').trim())
+                .filter(cat => cat !== '')
+        )].sort();
+
+        selectCat.innerHTML = '<option value="">-- Seleccionar categoría existente --</option>';
+        categoriasUnicas.forEach(cat => {
+            const option = document.createElement('option');
+            option.value = cat;
+            option.textContent = cat;
+            selectCat.appendChild(option);
+        });
+    }
+
+    // 2. Extraer subcategorías únicas existentes
+    if (selectSub) {
+        const subcategoriasUnicas = [...new Set(
+            listaProductos
+                .map(p => (p.subcategoria || '').trim())
+                .filter(sub => sub !== '')
+        )].sort();
+
+        selectSub.innerHTML = '<option value="">-- Seleccionar subcategoría existente --</option>';
+        subcategoriasUnicas.forEach(sub => {
+            const option = document.createElement('option');
+            option.value = sub;
+            option.textContent = sub;
+            selectSub.appendChild(option);
+        });
+    }
+}
+
+// FUNCIONES DE COPIADO AL SELECCIONAR UNA OPCIÓN EN LOS DESPLEGABLES
+function seleccionarCategoriaExistente(valor) {
+    const inputCat = document.getElementById('prod-categoria');
+    if (inputCat) inputCat.value = valor;
+}
+
+function seleccionarSubcategoriaExistente(valor) {
+    const inputSub = document.getElementById('prod-subcategoria');
+    if (inputSub) inputSub.value = valor;
 }
 
 // 2. RENDERIZAR LISTA CON CATEGORÍA Y SUBCATEGORÍA
@@ -154,12 +206,29 @@ function prepararEdicion(id) {
     const prod = listaProductos.find(p => p.id === id);
     if (!prod) return;
 
+    const catActual = prod.categoria || prod.seccion || '';
+    const subCatActual = prod.subcategoria || '';
+
     document.getElementById('prod-id').value = prod.id;
     document.getElementById('prod-nombre').value = prod.nombre;
     document.getElementById('prod-precio').value = prod.precio;
-    document.getElementById('prod-categoria').value = prod.categoria || prod.seccion || '';
-    document.getElementById('prod-subcategoria').value = prod.subcategoria || '';
+    document.getElementById('prod-categoria').value = catActual;
+    document.getElementById('prod-subcategoria').value = subCatActual;
     document.getElementById('prod-imagen-url').value = prod.imagen || '';
+
+    // Sincronizar select de Categoría
+    const selectCat = document.getElementById('select-categoria');
+    if (selectCat) {
+        const existe = Array.from(selectCat.options).some(opt => opt.value === catActual);
+        selectCat.value = existe ? catActual : '';
+    }
+
+    // Sincronizar select de Subcategoría
+    const selectSub = document.getElementById('select-subcategoria');
+    if (selectSub) {
+        const existe = Array.from(selectSub.options).some(opt => opt.value === subCatActual);
+        selectSub.value = existe ? subCatActual : '';
+    }
 
     document.getElementById('titulo-form').innerText = '✏️ Editar Producto';
     document.getElementById('btn-guardar').innerText = 'Actualizar Producto';
@@ -170,6 +239,13 @@ function prepararEdicion(id) {
 function resetearFormulario() {
     document.getElementById('form-producto').reset();
     document.getElementById('prod-id').value = '';
+
+    const selectCat = document.getElementById('select-categoria');
+    if (selectCat) selectCat.value = '';
+
+    const selectSub = document.getElementById('select-subcategoria');
+    if (selectSub) selectSub.value = '';
+
     document.getElementById('titulo-form').innerText = '➕ Agregar Nuevo Producto';
     document.getElementById('btn-guardar').innerText = 'Guardar Producto';
     document.getElementById('btn-cancelar').style.display = 'none';
@@ -200,5 +276,4 @@ function convertirBase64(file) {
         reader.readAsDataURL(file);
         reader.onload = () => resolve(reader.result);
         reader.onerror = error => reject(error);
-    });
-}
+    });                                                   }
