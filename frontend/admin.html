@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -36,14 +36,28 @@
 
                 <!-- CATEGORÍA (Modelo de moto o marca) -->
                 <div class="grupo-form">
-                    <label for="prod-categoria">Categoría (Modelo / Marca):</label>
-                    <input type="text" id="prod-categoria" placeholder="Ej. AX100, CG125, DT125" required>
+                    <label for="select-categoria">Categoría (Modelo / Marca):</label>
+                    
+                    <!-- Menú con categorías existentes -->
+                    <select id="select-categoria" style="width: 100%; margin-bottom: 8px; padding: 8px; border-radius: 4px; border: 1px solid #ccc;" onchange="seleccionarCategoriaExistente(this.value)">
+                        <option value="">-- Seleccionar categoría existente --</option>
+                    </select>
+
+                    <!-- Casilla para ver la seleccionada o escribir una nueva -->
+                    <input type="text" id="prod-categoria" placeholder="O escribe una nueva categoría (Ej. AX100)" required>
                 </div>
 
                 <!-- SUBCATEGORÍA (Tipo de repuesto/accesorio) -->
                 <div class="grupo-form">
-                    <label for="prod-subcategoria">Subcategoría (Tipo de repuesto):</label>
-                    <input type="text" id="prod-subcategoria" placeholder="Ej. Asientos, Frenos, Luces" required>
+                    <label for="select-subcategoria">Subcategoría (Tipo de repuesto):</label>
+
+                    <!-- Menú con subcategorías existentes -->
+                    <select id="select-subcategoria" style="width: 100%; margin-bottom: 8px; padding: 8px; border-radius: 4px; border: 1px solid #ccc;" onchange="seleccionarSubcategoriaExistente(this.value)">
+                        <option value="">-- Seleccionar subcategoría existente --</option>
+                    </select>
+
+                    <!-- Casilla para ver la seleccionada o escribir una nueva -->
+                    <input type="text" id="prod-subcategoria" placeholder="O escribe una nueva subcategoría (Ej. Asientos)" required>
                 </div>
 
                 <div class="grupo-form">
