@@ -42,7 +42,7 @@ body::before {
     width: 100%;
     z-index: 1000;
     
-    /* Fondo semi-transparente en lugar de 1.webp */
+    /* Fondo semi-transparente */
     background: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
@@ -180,15 +180,6 @@ body::before {
     gap: 8px;
 }
 
-.barra-filtros select {
-    padding: 8px 12px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    font-size: 15px;
-    outline: none;
-    background-color: #fafafa;
-}
-
 /* BUSCADOR CON LUPA */
 .buscador-grupo {
     position: relative;
@@ -221,6 +212,63 @@ body::before {
     font-size: 14px;
     pointer-events: none;
     opacity: 0.6;
+}
+
+/* ==========================================
+   ESTILOS PARA MENÚS DESPLEGABLES (SELECTS)
+   ========================================== */
+.formulario-admin select,
+.grupo-form select,
+.barra-filtros select {
+    width: 100%;
+    padding: 10px 35px 10px 12px;
+    font-size: 15px;
+    font-weight: 500;
+    color: #333;
+    background-color: #fafafa;
+    /* Flecha personalizada moderna */
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%333333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    margin-bottom: 8px;
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    box-sizing: border-box;
+}
+
+.barra-filtros select {
+    width: auto;
+    margin-bottom: 0;
+}
+
+.formulario-admin select:hover,
+.grupo-form select:hover,
+.barra-filtros select:hover {
+    border-color: #888;
+    background-color: #ffffff;
+}
+
+.formulario-admin select:focus,
+.grupo-form select:focus,
+.barra-filtros select:focus {
+    border-color: #e50914; /* Rojo Biker Vivo */
+    background-color: #ffffff;
+    box-shadow: 0 0 5px rgba(229, 9, 20, 0.3);
+}
+
+.formulario-admin select option,
+.grupo-form select option,
+.barra-filtros select option {
+    padding: 10px;
+    color: #333;
+    background-color: #ffffff;
 }
 
 /* ==========================================
@@ -431,7 +479,6 @@ body::before {
 
 .formulario-admin input[type="text"],
 .formulario-admin input[type="number"],
-.formulario-admin select,
 .formulario-admin textarea {
     width: 100%;
     padding: 10px;
@@ -443,7 +490,6 @@ body::before {
 }
 
 .formulario-admin input:focus,
-.formulario-admin select:focus,
 .formulario-admin textarea:focus {
     border-color: #28a745;
     outline: none;
@@ -787,6 +833,13 @@ input[type="file"]::file-selector-button:hover {
         width: auto;
         max-width: 100%;
     }
+    /* Ajuste en pantallas móviles para prevenir el auto-zoom en iOS */
+    .formulario-admin select,
+    .grupo-form select,
+    .barra-filtros select {
+        font-size: 16px;
+        padding: 11px 35px 11px 12px;
+    }
 }
 
 @media (max-width: 360px) {
@@ -810,4 +863,4 @@ input[type="file"]::file-selector-button:hover {
         padding: 8px;
         font-size: 14px;
     }
-    }
+        }
