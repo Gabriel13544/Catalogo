@@ -1,3 +1,4 @@
+// URL de tu servidor backend en Render
 const API_URL = 'https://tienda-bikershop.onrender.com';
 // 🔑 CONTRASEÑA DE ADMINISTRADOR:
 const CLAVE_CORRECTA = 'biker2026'; 
@@ -16,7 +17,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+// ==========================================
 // 0. VERIFICACIÓN DE CONTRASEÑA
+// ==========================================
 function validarAccesoAdmin() {
     const autenticado = sessionStorage.getItem('adminAutenticado');
 
@@ -36,7 +39,9 @@ function validarAccesoAdmin() {
     }
 }
 
+// ==========================================
 // 1. CARGAR INVENTARIO DE PRODUCTOS
+// ==========================================
 function cargarProductosAdmin() {
     const contenedor = document.getElementById('lista-admin-productos');
     
@@ -55,7 +60,7 @@ function cargarProductosAdmin() {
         });
 }
 
-// NUEVA FUNCIÓN: ACTUALIZAR MENÚS DESPLEGABLES DE CATEGORÍAS Y SUBCATEGORÍAS
+// ACTUALIZAR MENÚS DESPLEGABLES DE CATEGORÍAS Y SUBCATEGORÍAS
 function actualizarSelectsFiltros() {
     const selectCat = document.getElementById('select-categoria');
     const selectSub = document.getElementById('select-subcategoria');
@@ -106,7 +111,9 @@ function seleccionarSubcategoriaExistente(valor) {
     if (inputSub) inputSub.value = valor;
 }
 
+// ==========================================
 // 2. RENDERIZAR LISTA CON CATEGORÍA Y SUBCATEGORÍA
+// ==========================================
 function renderizarInventario(productos) {
     const contenedor = document.getElementById('lista-admin-productos');
     if (!contenedor) return;
@@ -139,7 +146,9 @@ function renderizarInventario(productos) {
     });
 }
 
+// ==========================================
 // 3. FILTRAR INVENTARIO EN TIEMPO REAL
+// ==========================================
 function filtrarInventarioAdmin() {
     const query = document.getElementById('input-admin-buscar').value.toLowerCase().trim();
     const filtrados = listaProductos.filter(p => 
@@ -150,7 +159,9 @@ function filtrarInventarioAdmin() {
     renderizarInventario(filtrados);
 }
 
+// ==========================================
 // 4. GUARDAR O ACTUALIZAR PRODUCTO
+// ==========================================
 async function guardarProducto(e) {
     e.preventDefault();
 
@@ -172,9 +183,9 @@ async function guardarProducto(e) {
     const payload = {
         nombre,
         precio,
-        categoria,      // Ej. "AX100"
+        categoria,          // Ej. "AX100"
         seccion: categoria, // Mantenemos compatibilidad por si se usa en el backend
-        subcategoria,   // Ej. "Asientos"
+        subcategoria,       // Ej. "Asientos"
         imagen: imagenFinal
     };
 
@@ -192,6 +203,10 @@ async function guardarProducto(e) {
     })
     .then(() => {
         alert(id ? '✅ Producto actualizado correctamente.' : '✅ Producto agregado al catálogo.');
+        
+        // Sincronización en tiempo real con otras pestañas
+        localStorage.setItem('actualizacionCatalogo', Date.now());
+
         resetearFormulario();
         cargarProductosAdmin();
     })
@@ -201,7 +216,9 @@ async function guardarProducto(e) {
     });
 }
 
+// ==========================================
 // 5. PREPARAR FORMULARIO PARA EDICIÓN
+// ==========================================
 function prepararEdicion(id) {
     const prod = listaProductos.find(p => p.id === id);
     if (!prod) return;
@@ -235,7 +252,9 @@ function prepararEdicion(id) {
     document.getElementById('btn-cancelar').style.display = 'inline-block';
 }
 
+// ==========================================
 // 6. RESETEAR FORMULARIO
+// ==========================================
 function resetearFormulario() {
     document.getElementById('form-producto').reset();
     document.getElementById('prod-id').value = '';
@@ -251,7 +270,9 @@ function resetearFormulario() {
     document.getElementById('btn-cancelar').style.display = 'none';
 }
 
+// ==========================================
 // 7. ELIMINAR PRODUCTO
+// ==========================================
 function eliminarProducto(id) {
     if (!confirm('¿Estás seguro de que deseas eliminar este producto?')) return;
 
@@ -261,6 +282,10 @@ function eliminarProducto(id) {
     .then(res => {
         if (!res.ok) throw new Error('Error al eliminar');
         alert('🗑️ Producto eliminado.');
+
+        // Sincronización en tiempo real con otras pestañas
+        localStorage.setItem('actualizacionCatalogo', Date.now());
+
         cargarProductosAdmin();
     })
     .catch(err => {
@@ -276,4 +301,5 @@ function convertirBase64(file) {
         reader.readAsDataURL(file);
         reader.onload = () => resolve(reader.result);
         reader.onerror = error => reject(error);
-    });                                                   }
+    });                                                 
+}
