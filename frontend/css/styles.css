@@ -13,7 +13,7 @@ body {
     overflow-x: hidden;
     position: relative;
     /* Espacio superior para que la cabecera fija no tape el contenido inicial */
-    padding-top: 125px; 
+    padding-top: 135px; 
 }
 
 /* CAPA DE FONDO FIJA (Única imagen para toda la página) */
@@ -65,6 +65,16 @@ body::before {
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
 }
 
+/* CONTENEDOR DE ACCIONES EN EL ENCABEZADO */
+.header-acciones {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+}
+
 /* CÁPSULA ROJO BIKER VIVO PARA EL ENLACE DE CONTACTO */
 .texto-contacto-btn {
     cursor: pointer;
@@ -72,7 +82,6 @@ body::before {
     background-color: #e50914; /* Rojo Biker Vivo */
     color: #ffffff !important;   /* Texto blanco para máximo contraste */
     font-weight: bold;
-    margin-top: 8px;
     padding: 6px 16px;
     border-radius: 20px;        /* Estilo tipo cápsula / botón */
     font-size: 13px;
@@ -84,6 +93,26 @@ body::before {
     background-color: #b20710;
     transform: scale(1.04);
     box-shadow: 0 4px 12px rgba(229, 9, 20, 0.4);
+}
+
+/* BOTÓN ACCESO DIRECTO AL CARRITO EN HEADER */
+.btn-carrito-header {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.6);
+    transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-carrito-header:hover {
+    background-color: #218838;
+    transform: scale(1.04);
+    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.4);
 }
 
 /* ==========================================
@@ -226,7 +255,6 @@ body::before {
     font-weight: 500;
     color: #333;
     background-color: #fafafa;
-    /* Flecha personalizada moderna */
     background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%333333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
     background-repeat: no-repeat;
     background-position: right 12px center;
@@ -295,7 +323,6 @@ body::before {
     box-shadow: 0 10px 20px rgba(0,0,0,0.4);
 }
 
-/* CONFIGURACIÓN DE IMÁGENES */
 .tarjeta-producto img {
     width: 100%;
     max-width: 800px; 
@@ -367,13 +394,13 @@ body::before {
     margin-bottom: 15px;
 }
 
-#lista-carrito {
+#lista-carrito, #lista-carrito-modal {
     list-style: none;
     max-height: 400px;
     overflow-y: auto;
 }
 
-#lista-carrito li {
+#lista-carrito li, #lista-carrito-modal li {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -384,14 +411,17 @@ body::before {
 }
 
 #lista-carrito li span:first-child,
-#lista-carrito li .nombre-item {
+#lista-carrito li .nombre-item,
+#lista-carrito-modal li span:first-child,
+#lista-carrito-modal li .nombre-item {
     flex: 1;
     min-width: 0;
     word-break: break-word;
     font-size: 14px;
 }
 
-#lista-carrito li .precio-item {
+#lista-carrito li .precio-item,
+#lista-carrito-modal li .precio-item {
     flex-shrink: 0;
     white-space: nowrap;
 }
@@ -447,6 +477,40 @@ body::before {
 
 .btn-eliminar-carrito:hover {
     background-color: #cc0000;
+}
+
+/* ==========================================
+   BOTÓN DE DESPLAZAMIENTO FLOTANTE (SCROLL)
+   ========================================== */
+.btn-flotante {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: #e50914; /* Rojo Biker Vivo */
+    color: #ffffff;
+    border: none;
+    font-size: 22px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-flotante:hover {
+    background-color: #b20710;
+    transform: scale(1.1);
+    box-shadow: 0 6px 16px rgba(229, 9, 20, 0.6);
+}
+
+.btn-flotante:active {
+    transform: scale(0.95);
 }
 
 /* ==========================================
@@ -620,7 +684,7 @@ input[type="file"]::file-selector-button:hover {
 }
 
 /* ==========================================
-   MODALES (CONTACTO Y ENTREGA)
+   MODALES (CONTACTO, ENTREGA Y CARRITO)
    ========================================== */
 .modal-contacto-overlay {
     display: none;
@@ -802,7 +866,7 @@ input[type="file"]::file-selector-button:hover {
 
 @media (max-width: 480px) {
     body {
-        padding-top: 130px;
+        padding-top: 150px;
     }
     #titulo-form {
         font-size: 1.05rem;
@@ -833,12 +897,18 @@ input[type="file"]::file-selector-button:hover {
         width: auto;
         max-width: 100%;
     }
-    /* Ajuste en pantallas móviles para prevenir el auto-zoom en iOS */
     .formulario-admin select,
     .grupo-form select,
     .barra-filtros select {
         font-size: 16px;
         padding: 11px 35px 11px 12px;
+    }
+    .btn-flotante {
+        width: 45px;
+        height: 45px;
+        bottom: 15px;
+        right: 15px;
+        font-size: 18px;
     }
 }
 
@@ -846,9 +916,10 @@ input[type="file"]::file-selector-button:hover {
     .encabezado h1 {
         font-size: 1rem;
     }
-    .texto-contacto-btn {
-        font-size: 12px;
-        padding: 5px 12px;
+    .texto-contacto-btn,
+    .btn-carrito-header {
+        font-size: 11px;
+        padding: 5px 10px;
     }
     .contenido-tarjeta {
         padding: 10px;
@@ -863,4 +934,4 @@ input[type="file"]::file-selector-button:hover {
         padding: 8px;
         font-size: 14px;
     }
-        }
+}
