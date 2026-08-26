@@ -10,8 +10,11 @@ document.addEventListener('DOMContentLoaded', () => {
     configurarFiltro();
     configurarModalContacto();
     configurarModalEntrega();
+    configurarModalCarrito();
+    configurarBotonScroll();
+    configurarSincronizacion();
 
-    // Enlazamos el botón de enviar pedido
+    // Enlazamos los botones de enviar pedido (lateral y modal)
     const btnComprar = document.getElementById('btn-comprar');
     if (btnComprar) {
         btnComprar.addEventListener('click', enviarPedidoWhatsApp);
@@ -115,10 +118,7 @@ function aplicarFiltros() {
         const catProducto = prod.categoria || prod.seccion || '';
         const subcatProducto = prod.subcategoria || '';
 
-        // Comprueba si coincide la categoría seleccionada
         const coincideCategoria = (categoriaSeleccionada === 'TODOS' || catProducto === categoriaSeleccionada);
-        
-        // Comprueba si el texto buscado coincide con Nombre, Categoría o Subcategoría
         const coincideTexto = prod.nombre.toLowerCase().includes(busqueda) ||
                               catProducto.toLowerCase().includes(busqueda) ||
                               subcatProducto.toLowerCase().includes(busqueda);
@@ -138,7 +138,6 @@ function configurarFiltro() {
     }
 
     if (inputBuscador) {
-        // Filtra en tiempo real conforme el usuario escribe
         inputBuscador.addEventListener('input', aplicarFiltros);
     }
 }
@@ -192,7 +191,41 @@ function configurarModalEntrega() {
 }
 
 // ==========================================
-// 🛒 5. CARRITO Y ENVÍO POR WHATSAPP
+// 🛒 5. MODAL DEL CARRITO DE COMPRAS (CAMBIO 2)
+// ==========================================
+function configurarModalCarrito() {
+    const btnCarritoHeader = document.getElementById('btn-carrito-top');
+    const modalCarrito = document.getElementById('modal-carrito-popup');
+    const btnCerrar = document.getElementById('cerrar-modal-carrito');
+    const btnComprarModal = document.getElementById('btn-comprar-modal');
+
+    const abrirModal = () => {
+        if (modalCarrito) modalCarrito.style.display = 'flex';
+    };
+
+    const cerrarModal = () => {
+        if (modalCarrito) modalCarrito.style.display = 'none';
+    };
+
+    if (btnCarritoHeader) btnCarritoHeader.addEventListener('click', abrirModal);
+    if (btnCerrar) btnCerrar.addEventListener('click', cerrarModal);
+
+    if (btnComprarModal) {
+        btnComprarModal.addEventListener('click', () => {
+            cerrarModal();
+            enviarPedidoWhatsApp();
+        });
+    }
+
+    window.addEventListener('click', (e) => {
+        if (e.target === modalCarrito) {
+            cerrarModal();
+        }
+    });
+}
+
+// ==========================================
+// 🛒 6. CARRITO Y ENVÍO POR WHATSAPP
 // ==========================================
 function agregarAlCarrito(id, nombre, precio) {
     const existente = carrito.find(item => item.id === id);
@@ -211,31 +244,45 @@ function eliminarDelCarrito(id) {
 
 function actualizarCarrito() {
     const listaCarrito = document.getElementById('lista-carrito');
+    const listaCarritoModal = document.getElementById('lista-carrito-modal');
     const totalCarrito = document.getElementById('total-carrito');
+    const totalCarritoModal = document.getElementById('total-carrito-modal');
     const contadorCarrito = document.getElementById('contador-carrito');
-    
-    if (!listaCarrito) return;
+    const contadorCarritoHeader = document.getElementById('contador-carrito-header');
 
-    listaCarrito.innerHTML = '';
     let total = 0;
     let totalItems = 0;
 
+    let itemsHTML = '';
+
     carrito.forEach(item => {
-        total += (item.precio * item.cantidad);
+        const subtotal = item.precio * item.cantidad;
+        total += subtotal;
         totalItems += item.cantidad;
 
-        const li = document.createElement('li');
-        li.className = 'item-carrito';
-        li.innerHTML = `
-            <span>${item.nombre} x${item.cantidad}</span>
-            <span>$${(item.precio * item.cantidad).toFixed(2)}</span>
-            <button class="btn-eliminar-carrito" onclick="eliminarDelCarrito('${item.id}')">X</button>
+        itemsHTML += `
+            <li class="item-carrito">
+                <span class="nombre-item">${item.nombre} x${item.cantidad}</span>
+                <span class="precio-item">$${subtotal.toFixed(2)}</span>
+                <button class="btn-eliminar-carrito" onclick="eliminarDelCarrito('${item.id}')">X</button>
+            </li>
         `;
-        listaCarrito.appendChild(li);
     });
 
-    totalCarrito.innerText = `$${total.toFixed(2)}`;
+    const textoVacio = '<p style="text-align: center; color: #777; padding: 10px;">El carrito está vacío.</p>';
+
+    // Renderizar lista en lateral y en el modal
+    if (listaCarrito) listaCarrito.innerHTML = carrito.length ? itemsHTML : '';
+    if (listaCarritoModal) listaCarritoModal.innerHTML = carrito.length ? itemsHTML : textoVacio;
+
+    // Actualizar totales en ambas vistas
+    const totalFormateado = `$${total.toFixed(2)}`;
+    if (totalCarrito) totalCarrito.innerText = totalFormateado;
+    if (totalCarritoModal) totalCarritoModal.innerText = totalFormateado;
+
+    // Actualizar contadores
     if (contadorCarrito) contadorCarrito.innerText = totalItems;
+    if (contadorCarritoHeader) contadorCarritoHeader.innerText = totalItems;
 }
 
 function enviarPedidoWhatsApp() {
@@ -271,4 +318,41 @@ function confirmarEntrega(metodoSeleccionado) {
     const urlWhatsApp = `https://wa.me/${numeroTelefono}?text=${mensaje}`;
 
     window.open(urlWhatsApp, '_blank');
+}
+
+// ==========================================
+// ⬆️⬇️ 7. BOTÓN FLOTANTE DESPLAZAMIENTO (CAMBIO 1)
+// ==========================================
+function configurarBotonScroll() {
+    const btnScroll = document.getElementById('btn-scroll-flotante');
+    const flecha = document.getElementById('flecha-scroll');
+    if (!btnScroll || !flecha) return;
+
+    window.addEventListener('scroll', () => {
+        // Si el usuario bajó más de 300px, la flecha apunta hacia arriba
+        if (window.scrollY > 300) {
+            flecha.textContent = '↑';
+        } else {
+            flecha.textContent = '↓';
+        }
+    });
+
+    btnScroll.addEventListener('click', () => {
+        if (window.scrollY > 300) {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else {
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        }
+    });
+}
+
+// ==========================================
+// 🔄 8. SINCRO AUTO-REFRESCO (CAMBIO 3)
+// ==========================================
+function configurarSincronizacion() {
+    window.addEventListener('storage', (e) => {
+        if (e.key === 'actualizacionCatalogo') {
+            window.location.reload();
+        }
+    });
 }
