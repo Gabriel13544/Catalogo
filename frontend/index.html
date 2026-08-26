@@ -17,16 +17,23 @@
 </head>
 <body>
 
-    <!-- ENCABEZADO FIJO (Fondo horizontal 1.webp) -->
+    <!-- ENCABEZADO FIJO -->
     <header class="encabezado">
         <h1>Nuestro Catálogo</h1>
         <p>Tienda BikerShop</p>
-        <p id="texto-contacto" class="texto-contacto-btn">
-            📍 Ver Dirección y WhatsApp (Toca aquí)
-        </p>
+        
+        <!-- CAMBIO 2: Acceso directo al carrito en el principio -->
+        <div class="header-acciones">
+            <p id="texto-contacto" class="texto-contacto-btn">
+                📍 Ver Dirección y WhatsApp (Toca aquí)
+            </p>
+            <button id="btn-carrito-top" class="btn-carrito-header">
+                🛒 Ver Carrito (<span id="contador-carrito-header">0</span>)
+            </button>
+        </div>
     </header>
 
-    <!-- LOGO REDONDO (Se desplaza con el scroll de la página) -->
+    <!-- LOGO REDONDO -->
     <div class="contenedor-logo">
         <img src="logo/logo.jpg" id="logo-contacto" alt="Logo BikerShop" class="logo-redondo">
     </div>
@@ -61,55 +68,57 @@
             </div>
         </main>
 
+        <!-- SECCIÓN DE CARRITO LATERAL (Existente) -->
         <aside class="seccion-carrito">
             <h3>Tu Carrito (<span id="contador-carrito">0</span>)</h3>
-            
-            <ul id="lista-carrito">
-            </ul>
-            
+            <ul id="lista-carrito"></ul>
             <div class="total-seccion">
                 <strong>Total:</strong> <span id="total-carrito">$0.00</span>
             </div>
-            
             <button id="btn-comprar" class="btn-accion">Enviar Pedido</button>
         </aside>
 
+    </div>
+
+    <!-- CAMBIO 2: VENTANA EMERGENTE (MODAL DEL CARRITO) -->
+    <div id="modal-carrito-popup" class="modal-contacto-overlay">
+        <div class="modal-contacto-card">
+            <span class="btn-cerrar-modal" id="cerrar-modal-carrito">&times;</span>
+            
+            <h2>🛒 Tu Carrito de Compras</h2>
+            <hr style="margin: 10px 0; border: 0; border-top: 1px solid #eee;">
+            
+            <div id="lista-carrito-modal" style="max-height: 250px; overflow-y: auto; margin-bottom: 15px;">
+                <!-- Se poblará dinámicamente -->
+            </div>
+
+            <div class="total-seccion" style="font-size: 1.2rem; margin-bottom: 15px;">
+                <strong>Total:</strong> <span id="total-carrito-modal">$0.00</span>
+            </div>
+
+            <button id="btn-comprar-modal" class="btn-accion" style="width: 100%;">Enviar Pedido</button>
+        </div>
     </div>
 
     <!-- VENTANA EMERGENTE (MODAL DE CONTACTO) -->
     <div id="modal-contacto" class="modal-contacto-overlay">
         <div class="modal-contacto-card">
             <span class="btn-cerrar-modal" id="cerrar-modal">&times;</span>
-            
             <h2>🏍️ BikerShop Contacto</h2>
             <hr style="margin: 10px 0; border: 0; border-top: 1px solid #eee;">
-            
             <div class="info-contacto-item">
                 <strong>📍 Dirección:</strong>
                 <p>Cuba, Habana. (Calle 83 #28204 %282 y 282a El Cano La lisa).</p>
             </div>
-            
             <div class="info-contacto-item">
                 <strong>📞 Teléfono:</strong>
                 <p>+53 58875588</p>
             </div>
-
             <div class="acciones-contacto">
-                <a href="https://wa.me/message/PRCVJZDO4HL5M1" target="_blank" class="btn-modal-wa">
-                    💬 Chat Directo de WhatsApp
-                </a>
-
-                <a href="https://www.instagram.com/bikershop.oficial?igsh=MWp6NWNtamdndjZkeg==" target="_blank" class="btn-modal-ig">
-                   📸 Perfil de Instagram
-                </a>
-
-                <a href="https://www.facebook.com/share/19CGw44ELu/" target="_blank" class="btn-modal-fb">
-                    📘 Perfil de Facebook
-                </a>
-                
-                <a href="https://whatsapp.com/channel/0029VbC6NmGJENxvkIhNMy1d" target="_blank" class="btn-modal-canal">
-                    📢 Unirme al Canal de WhatsApp
-                </a>
+                <a href="https://wa.me/message/PRCVJZDO4HL5M1" target="_blank" class="btn-modal-wa">💬 Chat Directo de WhatsApp</a>
+                <a href="https://www.instagram.com/bikershop.oficial?igsh=MWp6NWNtamdndjZkeg==" target="_blank" class="btn-modal-ig">📸 Perfil de Instagram</a>
+                <a href="https://www.facebook.com/share/19CGw44ELu/" target="_blank" class="btn-modal-fb">📘 Perfil de Facebook</a>
+                <a href="https://whatsapp.com/channel/0029VbC6NmGJENxvkIhNMy1d" target="_blank" class="btn-modal-canal">📢 Unirme al Canal de WhatsApp</a>
             </div>
         </div>
     </div>
@@ -118,22 +127,19 @@
     <div id="modal-entrega" class="modal-contacto-overlay">
         <div class="modal-contacto-card" style="text-align: center;">
             <span class="btn-cerrar-modal" id="cerrar-modal-entrega">&times;</span>
-            
             <h2>🛵 Método de Entrega</h2>
-            <p style="margin: 12px 0; color: #666; font-size: 14px;">
-                ¿Cómo deseas recibir tu pedido? Selecciona una opción para continuar:
-            </p>
-            
+            <p style="margin: 12px 0; color: #666; font-size: 14px;">¿Cómo deseas recibir tu pedido? Selecciona una opción para continuar:</p>
             <div class="opciones-entrega">
-                <button class="btn-opcion-entrega" onclick="confirmarEntrega('Servicio de mensajería')">
-                    🛵 Servicio de mensajería
-                </button>
-                <button class="btn-opcion-entrega" onclick="confirmarEntrega('Recogida en tienda')">
-                    🏪 Recogida en tienda
-                </button>
+                <button class="btn-opcion-entrega" onclick="confirmarEntrega('Servicio de mensajería')">🛵 Servicio de mensajería</button>
+                <button class="btn-opcion-entrega" onclick="confirmarEntrega('Recogida en tienda')">🏪 Recogida en tienda</button>
             </div>
         </div>
     </div>
+
+    <!-- CAMBIO 1: BOTÓN DE DESPLAZAMIENTO FLOTANTE -->
+    <button id="btn-scroll-flotante" class="btn-flotante" title="Ir arriba/abajo">
+        <span id="flecha-scroll">↓</span>
+    </button>
 
 </body>
 </html>
