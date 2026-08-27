@@ -191,7 +191,7 @@ function configurarModalEntrega() {
 }
 
 // ==========================================
-// 🛒 5. MODAL DEL CARRITO DE COMPRAS (CAMBIO 2)
+// 🛒 5. MODAL DEL CARRITO DE COMPRAS
 // ==========================================
 function configurarModalCarrito() {
     const btnCarritoHeader = document.getElementById('btn-carrito-top');
@@ -235,6 +235,9 @@ function agregarAlCarrito(id, nombre, precio) {
         carrito.push({ id, nombre, precio, cantidad: 1 });
     }
     actualizarCarrito();
+
+    // Alerta de confirmación al usuario
+    alert(`Usted ha agregado el producto ${nombre} al carrito`);
 }
 
 function eliminarDelCarrito(id) {
@@ -321,7 +324,7 @@ function confirmarEntrega(metodoSeleccionado) {
 }
 
 // ==========================================
-// ⬆️⬇️ 7. BOTÓN FLOTANTE DESPLAZAMIENTO (CAMBIO 1)
+// ⬆️⬇️ 7. BOTÓN FLOTANTE DESPLAZAMIENTO
 // ==========================================
 function configurarBotonScroll() {
     const btnScroll = document.getElementById('btn-scroll-flotante');
@@ -347,7 +350,7 @@ function configurarBotonScroll() {
 }
 
 // ==========================================
-// 🔄 8. SINCRO AUTO-REFRESCO (CAMBIO 3)
+// 🔄 8. SINCRO AUTO-REFRESCO
 // ==========================================
 function configurarSincronizacion() {
     window.addEventListener('storage', (e) => {
